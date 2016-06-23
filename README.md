@@ -1,1 +1,3 @@
-# Qu-lgeist
+# Quaelgeist
+
+Dialogsysteme final project SS 2k16
