@@ -1,5 +1,5 @@
 # Quaelgeist
 
-Dialogsysteme final project SS 2k16
+Dialogsysteme final project SS 2016
 
 Teamname: jupleg
