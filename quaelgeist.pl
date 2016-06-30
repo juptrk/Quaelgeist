@@ -1,3 +1,3 @@
 :- include('framework.pl').
 
-match([_], ["To", close, the, program, write, "bye."]).
+match(_, ["To", close, the, program, write, "bye."]).
