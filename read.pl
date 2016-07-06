@@ -12,8 +12,9 @@ read_string(DelChar,C,[C|RestString]) :- get0(Cnew), read_string(DelChar,Cnew,Re
 
 % Liste trennen in Wörter
 split_string(_,[],[]).
-split_string(SepChar,CharList,[Chunk|SingleLists]) :- get_chunk(SepChar,CharList,Chunk,RestCharList),
-                                                      split_string(SepChar,RestCharList,SingleLists).
+split_string(SepChar,CharList,[Chunk|SingleLists]) :- 
+	get_chunk(SepChar,CharList,Chunk,RestCharList),
+    split_string(SepChar,RestCharList,SingleLists).
 
 % einzelne Wörter erkennen
 get_chunk(_,[],[],[]).
@@ -26,5 +27,16 @@ strings_to_atoms([],[]).
 strings_to_atoms([X|Xs],[Y|Ys]) :- name(Y,X), strings_to_atoms(Xs,Ys).
 
 % alles zusammen: ganzen Satz einlesen
-read_sentence(Sentence) :- read_string("\n",String), split_string(32,String,Words), strings_to_atoms(Words,Sentence).
+read_sentence(Sentence) :- 
+	read_string("\n",String), 
+	list_lower(String,Lower), 
+	split_string(32,Lower,Words), 
+	strings_to_atoms(Words,Sentence).
+
+
+%wandelt Eingabe in LowerCase um 
+list_lower([],[]).
+list_lower([UpperHead|UpperTail],[LowerHead|LowerTail]) :- 
+	to_lower(UpperHead,LowerHead), 
+	list_lower(UpperTail,LowerTail).
 
