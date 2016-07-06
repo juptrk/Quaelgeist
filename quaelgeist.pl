@@ -156,15 +156,15 @@ verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht) :- (moerde
 
 random_answer(normal, Head) :- 
 	random_permutation([["Ich", denke, nicht, dass, wir, jetzt, darueber, reden, "sollten."],
-		["Bitte", denke, nocheinmal, ueber, deinen, naechsten, "Schritt", "nach."],
-		["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, bye, "eingeben."]],
-		[Head|_]).
+						["Bitte", denke, nocheinmal, ueber, deinen, naechsten, "Schritt", "nach."],
+						["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, bye, "eingeben."]],
+					   [Head|_]).
 
 random_answer(kind, Head) :- 
 	random_permutation([["Hey,", du, willst, etwas, von, "mir,", stell, eine, sinnvolle, "Frage!"],
-		["Darauf", will, ich, dir, gerade, nicht, "antworten."],
-		["Willst", du, etwa, schon, "aufgeben?", "Dann", sag, mir, "Gespraech", "beenden."]],
-		[Head|_]).
+						["Darauf", will, ich, dir, gerade, nicht, "antworten."],
+						["Willst", du, etwa, schon, "aufgeben?", "Dann", sag, mir, "Gespraech", "beenden."]],
+					   [Head|_]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,6 +247,7 @@ match([ein, tipp, bitte], [ ]) :-
 	mastermind, 
 	retract(mastermindspiele(AlteAnzahl)), NeueAnzahl is AlteAnzahl+1, 
 	assert(mastermindspiele(NeueAnzahl)));
+	situation(kind),
 	writeln("Ich gebe dir jetzt keinen weiteren Tipp").
 	%wenn noch nie gespielt, dann kann man es spielen, sonder nicht
 
