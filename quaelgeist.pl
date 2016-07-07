@@ -1,7 +1,8 @@
 :- include('framework.pl').
-:- encoding(utf8).
+%:- encoding(utf8).
+:- encoding(iso_latin_1).
 :- include('scheresteinpapier.pl').
-:- include('mastermind.pl').
+:- include('mastermindRandom.pl').
 
 
 :- dynamic situation/1.
@@ -31,7 +32,7 @@ scheresteinpapierspiele(0).
 alter_antwort(["8"]).
 
 :- dynamic name_antwort/1.
-name_antwort(["Ich", "heiÃŸe", "Alex"]).
+name_antwort(["Ich", "heiße", "Alex"]).
 
 
 %Wissensbasis
@@ -82,7 +83,7 @@ v(locationquery, first) --> [bist].
 locprep --> [im].
 locprep --> ['in der'].
 
-%wenn wir es randomisieren wollen, allerdings scheint das sehr schwierig, weil man dasn die Hinweise anpassen mÃ¼sste etc.
+%wenn wir es randomisieren wollen, allerdings scheint das sehr schwierig, weil man dasn die Hinweise anpassen müsste etc.
 %tatort(Tatort) :- alle_orte(Orte), random_permutation(Orte,[Tatort|_Rest]).
 %tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|_Rest]).
 %moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
@@ -136,7 +137,7 @@ verdaechtigung1 :- 	writeln("Wer ist deiner Meinung nach der Moerder?"),
 verdaechtigung2(Moerderverdacht) :- writeln("Was war die Tatwaffe?"), read_sentence([Tatwaffeverdacht|_Tail]), 
 									((waffe(Tatwaffeverdacht), verdaechtigung3(Moerderverdacht, Tatwaffeverdacht));
 									(writeln("Ich bin so gespannt, deswegen nenne die Tatwaffe als erstes in deinem Satz."),
-									writeln("Du kannst nur GegenstÃ¤nde nennen, die in der Liste der moeglichen Tatwaffen auftauchen:"),
+									writeln("Du kannst nur Gegenstände nennen, die in der Liste der moeglichen Tatwaffen auftauchen:"),
 									alle_waffen(Waffen), writeln(Waffen),verdaechtigung2(Moerderverdacht))).
 
 verdaechtigung3(Moerderverdacht, Tatwaffeverdacht) :- writeln("Wo wurde die Putzfrau ermordet?"), read_sentence([Ortverdacht|_Tail]), 
@@ -151,7 +152,7 @@ verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht) :- (moerde
 																		(writeln("Dieser Verdacht ist leider falsch, versuche es spaeter nochmal!"),
 																				write("Du hast noch "), verdaechtigungszahl(AlteAnzahl), 
 																				Uebrigeversuche is 2-AlteAnzahl, write(Uebrigeversuche), 
-																				writeln(" VerdÃ¤chtigungsversuche Ã¼brig.")).
+																				writeln(" Verdächtigungsversuche übrig.")).
 
 
 random_answer(normal, Head) :- 
@@ -292,12 +293,13 @@ match([ich, moechte, eine, verdaechtigung, abgeben],[ ]) :-
 	((NeueAnzahl < 3,
 	writeln("Du solltest besser ueber deine Antworten nachdenken, unendlich viele Versuche hast du nicht mehr!"));
 	(NeueAnzahl>=3,
-	writeln("Du hast zu viele falsche VerdÃ¤chtigungen gemacht, du darfst keine mehr Ã¤uÃŸern."),
-	writeln("Leider hast du den Fall nicht gelÃ¶st und wirst gefeuert."),
-	writeln("Das Spiel ist nun beendet - schlieÃŸe es mit 'bye' und starte es neu fÃ¼r einen weiteren Versuch."))).
+	writeln("Du hast zu viele falsche Verdächtigungen gemacht, du darfst keine mehr äußern."),
+	writeln("Leider hast du den Fall nicht gelöst und wirst gefeuert."),
+	writeln("Das Spiel ist nun beendet - schließe es mit 'bye' und starte es neu für einen weiteren Versuch."))).
 
-match([test1], ["Ã¶"]).
-match(["Ã¶"], [test2]).
+match([test1], ["ö"]).
+match([ö], [test2]).
+match([ß], [test3]).
 
 % muss immer als letzte match-Abfrage stehen
 match(_, Answer) :- 
