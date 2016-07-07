@@ -3,6 +3,7 @@
 :- include('mastermind.pl').
 :- encoding(iso_latin_1).
 
+
 % definiert die aktuelle situation
 % mögliche situationen sind kind, garten, arbeitszimmer, wohnzimmer, schlafzimmer, eingangsbereich, kueche, geheim
 :- dynamic situation/1.
@@ -193,6 +194,7 @@ verdaechtigung2(Moerderverdacht, A) :- writeln("Was war die Tatwaffe?"), read_se
 									(writeln("Ich bin so gespannt, deswegen nenne die Tatwaffe als erstes in deinem Satz."),
 									writeln("Du kannst nur Gegenstände nennen, die in der Liste der moeglichen Tatwaffen auftauchen:"),
 									alle_waffen(Waffen), writeln(Waffen),verdaechtigung2(Moerderverdacht, A))).
+
 
 verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A) :- writeln("Wo wurde die Putzfrau ermordet?"), read_sentence([Ortverdacht|_Tail]), 
 														((location(Ortverdacht, _), verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A));
@@ -504,3 +506,4 @@ output(solved, ["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","
 output(wrong_suspicion, ["Dieser", "Verdacht", ist, leider, "falsch,", versuche, es, "später", "nochmal!", "Du", hast, noch, Anzahl, "Verdächtigungsversuche", "übrig."]) :-
 	verdaechtigungszahl(AlteAnzahl),
 	Anzahl is 2 - AlteAnzahl.
+
