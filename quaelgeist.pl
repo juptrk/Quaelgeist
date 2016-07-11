@@ -312,6 +312,37 @@ ask(Q,A) :-
 	change_situation(eingangsbereich));
 	output(no, A)).
 
+ask(Q, A) :-
+	person('Beamter', eingangsbereich),
+	situation(eingangsbereich),
+	(member(beamter, Q);
+	 member(beamten, Q);
+	 member(polizisten, Q);
+	 member(polizist, Q)),
+	nl,
+	writeln("Willst du den Beamten ansprechen?"),
+	nl,
+	read_sentence(Input),
+	((member(ja, Input),
+	  output(beamter, A),
+      retract(person('Beamter', _)),
+	  change_situation(beamter));
+     output(no, A)).
+
+ask(Q, A) :-
+	situation(beamter),
+	((member(täter, Q);
+	 member(mörder, Q)),
+	 nl,
+	 writeln("Ich kann Ihnen nicht sagen wer den Mord tatsächlich begangen hat, aber ich kann Ihnen folgendes sagen:"),
+	 output(taeter_info, A));
+	((member(tatverdächtigen, Q);
+	member(tatverdächtige, Q);
+	member(tatverdächtiger, Q)),
+	output(taeter_info, A)).
+
+
+
 % Gespräch beginnen
 ask(Q, A) :-
 	person('Alex', Location),
@@ -326,6 +357,7 @@ ask(Q, A) :-
 	output(kind, A),
 	change_situation(kind));
 	output(no, A)).
+
 
 ask(Q,A) :-
 	situation(kind),
@@ -511,8 +543,30 @@ output(eingangsbereich_beamter, ["Du", betrittst, den, "Eingangsbereich.",
 		"\nIn", der, "Garderobe", finden, sich, auf, den, ersten, "Blick", nur, einige, "Jacken", und, "Schuhe.",
 		"\n\nDas", "Licht", an, der, "Decke", flackert, "nervös."]).
 
+output(taeter_info, ["Unsere", "Tatverdächtigen", sind, diese, sechs, "Personen:",
+		"\n\nDer", "Vater:", "Er", ist, 39, "Jahre", alt, und, ein, echter, "Workaholic.",
+		"\nEr", hat, seine, "Frau", schon, "länger", im, "Verdacht,", "eine", "Affäre", mit, einem, "Freund", oder, "Angestellten", zu, "haben.",
+		"\n\nDie", "Mutter:", "Sie", ist, 32, "Jahre", alt, und, im, "Moment", unzufrieden, mit, ihrem, "Leben.",
+		"\nSie", hat, ihre, "Arbeit", "für", die, "Familie", "aufgegeben,", doch, ihr, "Ehemann", ist, selten, zuhause, und, das, gemeinsame, "Kind", ist, sehr, "anstrengend.",
+		"\nDennoch", beteuert, "sie,", immer, treu, gewesen, zu, "sein.",
+		"\n\nDer", "Gärtner:", "Er", ist, 27, "Jahre", alt, und, stammt, "ursprünglich", aus, "Mexiko.",
+		"\nEr", ist, sehr, "gutaussehend,", macht, viel, "Sport", und, ist, vorallem, morgens, im, "Haus,", weshalb, der, "Ehemann", ihn, als, erstes, einer, "Affäre", mit, seiner, "Frau", "verdächtigte.",
+		"\nMan", hat, dennoch, das, "Gefühl,", dass, ihm, der, "Job", hier, viel, "Spaß", macht, und, er, ihn, auf, keine, "Fall", verlieren, "will.",
+		"\n\nDer", "Koch:", "Er", ist, 59, "Jahre", alt, und, arbeitet, schon, seit, vielen, "Jahren", "für", den, "Mann", und, seine, "Familie.",
+		"\nAllerdings", ist, er, nicht, mehr, so, oft, im, "Haus,", da, er, etwas, gegen, dass, "restliche,", aus, dem, "Ausland", stammende, "Personal", "hat.",
+		"\n\nDer", "Nachbar:", "Er", ist, 34, "Jahre", "alt,", nicht, verheiratet, und, wohnt, erst, seit, einem, "Jahr", "nebenan.",
+		"\nIn", letzter, "Zeit", scheint, sich, die, "Mutter", "oft", mit, ihm, zu, "treffen,", weshalb, der, "Ehemann", auch, ihn, bereits, als, "mögliche", "Affäre", in, "Betracht", gezogen, "hatte.",
+		"\nSeit", ein, paar, "Monaten", "häufen", sich, bei, ihm, aber, die, "Besuche", einer, anderen, "Frau,", weshalb, der, "Ehemann", diesen, "Gedanken", bereits, verworfen, "hat.",
+		"\n\nDer", "Besuch:", "Er", ist, die, "große", "Unbekannte", auf, unserer, "Liste.",
+		"\nEr", muss, ein, "Freund", des, "Ehemannes", gewesen, "sein -", dieser, jedoch, wollte, dazu, vor, seiner, "Frau", nichts, "sagen.",
+		"\nMöglicherweise", handelt, es, sich, um, einen, "Privatdetektiv?"]).
+
+
 output(gespraech_ende, ["Du", beendest, das, "Gespraech."]).
 output(kind, ["Du", gehst, zu, dem, "Kind", und, beginnst, ein, "Gespraech."]).
+output(beamter, ["Du", sprichst, den, "Beamten", im, "Eingangsbereich", "an.",
+		"\n\n'Guten", "Tag!", "Was", "können", "Sie", mir, "über", unseren, "Fall", "erzählen?'",
+		"\n'Ich", denke, "nicht,", dass, ich, mehr, "weiß", als, "Sie -", ich, bin, gerade, "dabei,", mir, die, "Informationen", "über", die, "Tatverdächtigen", "aufzuschreiben.'"]).
 output(no, ["Okay,", dann, eben, "nicht."]).
 output(no_hinweis, ["Einen", weiteren, "Hinweis", musst, du, dir, erst, "erarbeiten."]).
 output(no_tipp, ["Ich", gebe, dir, jetzt, keinen, weiteren, "Tipp."]).

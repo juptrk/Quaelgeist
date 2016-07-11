@@ -56,6 +56,7 @@ greeting :-
 	writeln("Du betrittst das Haus."),
 	nl,
 	writeln("Im Eingangsbereich steht ein weiterer Beamter und schreibt etwas in sein Notizbuch."),
+	nl,
 	writeln("Er steht neben einer Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint."),
 	writeln("In der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe."),
 	nl,
