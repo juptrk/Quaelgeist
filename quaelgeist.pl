@@ -1,6 +1,6 @@
 :- include('framework.pl').
 :- include('scheresteinpapier.pl').
-:- include('mastermind.pl').
+:- include('mastermindRandom.pl').
 :- encoding(iso_latin_1).
 
 
@@ -29,13 +29,14 @@ change_situation(NewSituation) :-
 
 person('Du', eingangsbereich).
 person('Alex', eingangsbereich).
+person('Beamter', eingangsbereich).
 
 change_person(Person,NewLocation) :-
 	person(Person,OldLocation),
 	retract(person(Person,OldLocation)),
 	assertz(person(Person,NewLocation)).
 
-%dynamisches Praedikat: 
+%dynamisches Prädikat: 
 :- retractall(verdaechtigungszahl(_)).
 :- dynamic verdaechtigungszahl/1.
 verdaechtigungszahl(0).
@@ -96,8 +97,9 @@ increase_counter :-
 
 %Wissensbasis
 location(eingangsbereich, 'der Eingangsbereich').
+location(eingangsbereichfirst, 'der Eingangsbereich').
 location(schlafzimmer, 'das Schlafzimmer').
-location(kueche, 'die Kueche').
+location(küche, 'die Kueche').
 location(garten, 'der Garten').
 location(wohnzimmer, 'das Wohnzimmer').
 location(arbeitszimmer, 'das Arbeitszimmer').
@@ -129,14 +131,6 @@ tatwaffe(seil).
 moerder(nachbar).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-qusubj(location(_)) --> [wo].
-v(locationquery, third) --> [ist].
-v(locationquery, first) --> [bist].
-locprep --> [im].
-locprep --> ['in der'].
 
 %wenn wir es randomisieren wollen, allerdings scheint das sehr schwierig, weil man dasn die Hinweise anpassen müsste etc.
 %tatort(Tatort) :- alle_orte(Orte), random_permutation(Orte,[Tatort|_Rest]).
@@ -170,29 +164,29 @@ lageplan :- nl,
 			nl.
 
 
-verdaechtigung(A) :- 	writeln("Ok, dann lass mal hoeren."), writeln("Wer ist deiner Meinung nach der Moerder?"),
-					read_sentence([Moerderverdacht|_Tail]),((taeter(Moerderverdacht),verdaechtigung2(Moerderverdacht, A)) ; 
-					(writeln("Ich bin so gespannt, deswegen nenne den Tatverdaechtigen als erstes in deinem Satz."), 
-					writeln("Du kannst nur Personen verdaechtigen, die in der Liste der moeglichen Taeter auftauchen:"), alle_taeter(Taeterliste),
+verdaechtigung(A) :- writeln("Ok, dann lass mal hören."), writeln("Wer ist deiner Meinung nach der Mörder?"),
+					read_sentence([Moerderverdacht|_Tail]),((taeter(Moerderverdacht),verdaechtigung2(Moerderverdacht, A)); 
+					(writeln("Ich bin so gespannt, deswegen nenne den Tatverdächtigen als erstes in deinem Satz."), 
+					writeln("Du kannst nur Personen verdächtigen, die in der Liste der möglichen Täter auftauchen:"), alle_taeter(Taeterliste),
 					writeln(Taeterliste),verdaechtigung1(A))).
 
-verdaechtigung1(A) :- 	writeln("Wer ist deiner Meinung nach der Moerder?"),
-					read_sentence([Moerderverdacht|_Tail]),((taeter(Moerderverdacht),verdaechtigung2(Moerderverdacht, A)) ; 
-					(writeln("Ich bin so gespannt, deswegen nenne den Tatverdaechtigen als erstes in deinem Satz."),
-					writeln("Du kannst nur Personen verdaechtigen, die in der Liste der moeglichen Taeter auftauchen."), alle_taeter(Taeterliste),
+verdaechtigung1(A) :- writeln("Wer ist deiner Meinung nach der Mörder?"),
+					read_sentence([Moerderverdacht|_Tail]),((taeter(Moerderverdacht),verdaechtigung2(Moerderverdacht, A)); 
+					(writeln("Ich bin so gespannt, deswegen nenne den Tatverdächtigen als erstes in deinem Satz."),
+					writeln("Du kannst nur Personen verdächtigen, die in der Liste der möglichen Täter auftauchen."), alle_taeter(Taeterliste),
 					writeln(Taeterliste),verdaechtigung1(A))).
 
 verdaechtigung2(Moerderverdacht, A) :- writeln("Was war die Tatwaffe?"), read_sentence([Tatwaffeverdacht|_Tail]), 
 									((waffe(Tatwaffeverdacht), verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A));
 									(writeln("Ich bin so gespannt, deswegen nenne die Tatwaffe als erstes in deinem Satz."),
-									writeln("Du kannst nur Gegenstände nennen, die in der Liste der moeglichen Tatwaffen auftauchen:"),
+									writeln("Du kannst nur Gegenstände nennen, die in der Liste der möglichen Tatwaffen auftauchen:"),
 									alle_waffen(Waffen), writeln(Waffen),verdaechtigung2(Moerderverdacht, A))).
 
 
 verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A) :- writeln("Wo wurde die Putzfrau ermordet?"), read_sentence([Ortverdacht|_Tail]), 
 														((location(Ortverdacht, _), verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A));
 														(writeln("Ich bin so gespannt, deswegen nenne den Tatort als erstes in deinem Satz."),
-														writeln("Du kannst nur Orte nennen, die in der Liste der moeglichen Tatorte stehen:"),
+														writeln("Du kannst nur Orte nennen, die in der Liste der möglichen Tatorte stehen:"),
 														alle_orte(Orte), writeln(Orte),verdaechtigung3(Moerderverdacht,Tatwaffeverdacht, A))).
 
 verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A) :- (moerder(Moerderverdacht), tatwaffe(Tatwaffeverdacht), tatort(Ortverdacht), 
@@ -202,21 +196,21 @@ verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A) :- (moe
 
 random_answer(Situation, Head) :- 
 	normal(Situation),
-	random_permutation([["Ich", denke, nicht, dass, wir, jetzt, darueber, reden, "sollten."],
-						["Bitte", denke, nocheinmal, ueber, deinen, naechsten, "Schritt", "nach."],
-						["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, bye, "eingeben."]],
+	random_permutation([["Ich", denke, nicht, dass, wir, jetzt, darüber, reden, "sollten."],
+						["Bitte", denke, nocheinmal, über, deinen, nächsten, "Schritt", "nach."],
+						["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, "'bye'", "eingeben."]],
 					   [Head|_]).
 
 random_answer(kind, Head) :- 
 	random_permutation([["Hey,", du, willst, etwas, von, "mir,", stell, eine, sinnvolle, "Frage!"],
 						["Darauf", will, ich, dir, gerade, nicht, "antworten."],
-						["Willst", du, etwa, schon, "aufgeben?", "Dann", sag, mir, "Gespraech", "beenden."]],
+						["Willst", du, unser, "Gespräch", etwa, schon, "beenden?", "Dann", sag, das, doch, "einfach."]],
 					   [Head|_]).
 
 
 % Situation: normal
 
-normal(X) :- member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
+normal(X) :- member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
 
 
 match([ok], [stell, ruhig, munter, weiter, "Fragen,", ich, schaue, "dann,", ob, ich, sie, dir, beantworten, "will."]) :-
@@ -312,7 +306,9 @@ ask(Q,A) :-
 	nl,
 	read_sentence(Input),
 	((member(ja, Input),
-	output(eingangsbereich, A),
+	 ((person('Beamter', eingangsbereich),
+	   output(eingangsbereich_beamter, A));
+	   output(eingangsbereich, A)),
 	change_situation(eingangsbereich));
 	output(no, A)).
 
@@ -336,7 +332,8 @@ ask(Q,A) :-
 	(member(beenden, Q);
 	 member(tschuess, Q);
 	 member(gehen, Q);
-	 member(ende, Q)),
+	 member(ende, Q);
+	 member(wiedersehen, Q)),
 	nl,
 	writeln("Willst du unser Gespräch etwa einfach so beenden?"),
 	nl,
@@ -380,9 +377,8 @@ ask(Q,A) :-
 	   member(bitte, Input)),
 	 ((mastermindspiele(X),
 	  X = 0,
-	  mastermind,
-	  set_mastermind,
-	  output(nothing, A));
+	  mastermind(A),
+	  set_mastermind);
 	  output(no_hinweis, A)));
     ((member(ja, Input)),
       not(member(bitte, Input)),
@@ -456,7 +452,7 @@ ask(Q, A) :-
 	not(situation(kind)),
 	member(tatorte, Q),
 	nl,
-	writeln("Alle Raeume im Haus kommen als Tatort in Frage:"),
+	writeln("Alle Räume im Haus kommen als Tatort in Frage:"),
 	lageplan,
 	output(help, A).
 
@@ -481,12 +477,40 @@ ask(Q, A) :-
 
 
 
-output(garten, ["Du", gehst, in, den, "Garten.", "Er", ist, wunderschoen, und, man, "sieht,", dass, diese, "Familie", einen, "Gaertner", haben, "muss."]).
-output(arbeitszimmer, ["Du", betrittst, das, "Arbeitszimmer.", "Es", ist, offensichtlich, dass, dies, das, "Reich", des, "Vaters", "ist."]).
-output(kueche, ["Du", betrittst, die, "Kueche.", "Sie", ist, ziemlich, "groß", und, scheint, sehr, gut, ausgeruestet, zu, "sein."]).
-output(schlafzimmer, ["Du", betrittst, das, "Schlafzimmer.", "Es", ist, klar, dass, die, "Mutter", bei, dessen, "Einrichtung", die, "Finger", im, "Spiel", "hatte."]).
-output(wohnzimmer, ["Du", betrittst, das, "Wohnzimmer.", "Es", ist, das, schoenste, "Zimmer", des, "Hauses", mit, "Blick", auf, den, "Garten", und, einer, "Sofaecke."]).
-output(eingangsbereich, ["Du", betrittst, den, "Eingangsbereich.", "Die", "Anzahl", der, "Schuhe", wuerde, vermuten, lassen, dass, hier, 15, "Menschen", leben, wenn, man, es, nicht, besser, "wuesste."]).
+output(garten, ["Du", gehst, in, den, "Garten.",
+		"\n\nEr", ist, "wunderschön", und, man, "sieht,", dass, diese, "Familie", einen, "Gärtner", haben, "muss.",
+		"\nEine", rechteckig, gestutzte, "Hecke", "schützt", das, "Innere", vor, neugierigen, "Blicken.",
+		"\nAußerdem", gibt, es, ein, "großes,", buntes, "Blumenbeet", und, einen, riesigen, "Apfelbaum.",
+		"\n\nDas", "Highlight", des, "Gartens", ist, aber, klar, die, "große", "Sitzecke", mit, "Holzbänken", und, einer, "Grillschale,",
+		"\nin", der, es, scheinbar, vor, "Kurzem", noch, gebrannt, "hatte."]).
+
+output(arbeitszimmer, ["Du", betrittst, das, "Arbeitszimmer.", 
+		"\n\nEs", ist, offensichtlich, dass, dies, das, "Reich", des, "Vaters", "ist.",
+		"\nDas", "Zimmer", ist, "spärlich", "eingerichtet -", lediglich, eine, "Schrankwand", voll, mit, "Ordnern", und, "DVDs", und,
+		"\nein", "Schreibtisch", sowie, ein, "Stuhl", finden, sich, "hier.",
+		"\n\nAn", der, "Wand", "hängt", neben, einigen, "Bildern", und, einem, "Kalender", auch, eine, "Dartscheibe,", in, der, noch, einige, "Darts", "stecken.",
+		"\nDie", "Dartscheibe", scheint, mit, einem, "Foto", "geschmückt", zu, "sein,", auf, das, offensichtlich, mehrfach, gezielt, "wurde."]).
+
+output(kueche, ["Du", betrittst, die, "Küche.",
+		"\n\nSie", ist, ziemlich, "groß", und, scheint, sehr, gut, "ausgerüstet", zu, "sein."]).
+
+output(schlafzimmer, ["Du", betrittst, das, "Schlafzimmer.",
+		"\n\nEs", ist, klar, dass, die, "Mutter", bei, dessen, "Einrichtung", die, "Finger", im, "Spiel", "hatte."]).
+
+output(wohnzimmer, ["Du", betrittst, das, "Wohnzimmer.",
+		"\n\nEs", ist, das, "schönste", "Zimmer", des, "Hauses", mit, "Blick", auf, den, "Garten", und, einer, "Sofaecke."]).
+
+output(eingangsbereich, ["Du", betrittst, den, "Eingangsbereich.", 
+		"\n\nDas", einzige, "Möbelstück", hier, ist, eine, "Kommode,", auf, der, die, ganzen, "Schlüssel", der, "Familie", sowie, die, neueste, "Post", zu, liegen, "scheint.",
+		"\nIn", der, "Garderobe", finden, sich, auf, den, ersten, "Blick", nur, einige, "Jacken", und, "Schuhe.",
+		"\n\nDas", "Licht", an, der, "Decke", flackert, "nervös."]).
+
+output(eingangsbereich_beamter, ["Du", betrittst, den, "Eingangsbereich.",
+		"\n\nDort", steht, ein, weiterer, "Beamter", und, schreibt, etwas, in, sein, "Notizbuch.", 
+		"\n\nEr", steht, neben, einer, "Kommode,", auf, der, die, ganzen, "Schlüssel", der, "Familie", sowie, die, neueste, "Post", zu, liegen, "scheint.",
+		"\nIn", der, "Garderobe", finden, sich, auf, den, ersten, "Blick", nur, einige, "Jacken", und, "Schuhe.",
+		"\n\nDas", "Licht", an, der, "Decke", flackert, "nervös."]).
+
 output(gespraech_ende, ["Du", beendest, das, "Gespraech."]).
 output(kind, ["Du", gehst, zu, dem, "Kind", und, beginnst, ein, "Gespraech."]).
 output(no, ["Okay,", dann, eben, "nicht."]).
@@ -499,4 +523,6 @@ output(solved, ["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","
 output(wrong_suspicion, ["Dieser", "Verdacht", ist, leider, "falsch,", versuche, es, "später", "nochmal!", "Du", hast, noch, Anzahl, "Verdächtigungsversuche", "übrig."]) :-
 	verdaechtigungszahl(AlteAnzahl),
 	Anzahl is 2 - AlteAnzahl.
+
+%enter_text()
 

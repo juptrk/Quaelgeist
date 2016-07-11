@@ -3,6 +3,7 @@
 
 
 :- include('read.pl').
+:- encoding(iso_latin_1).
 
 quaelgeist :- greeting(), read_sentence(Input), quaelgeist(Input),!.
 quaelgeist([bye]) :- writeln("Danke, dass du 'Quälgeist' gespielt hast! Hoffentlich bis bald...").
@@ -43,7 +44,7 @@ greeting :-
 	writeln("'Guten Morgen - was ist hier passiert?'"),
 	writeln("'Die Putzfrau des Hauses wurde ermordet. Mehr wissen wir noch nicht - der Gerichtsmediziner hat die Leiche bereits mitgenommen um sie zu untersuchen.'"),
   	writeln("'Wo wurde sie gefunden?.'"),
-  	writeln("'Im Flur, aber der Gerichtsmediziner sagt, dass die Leiche bewegt wurde, also ist der Flur nicht unser Tatort.'"),
+  	writeln("'Im Flur - aber der Gerichtsmediziner sagt, dass die Leiche bewegt wurde, also ist der Flur nicht unser Tatort.'"),
   	writeln("'Weiß man etwas über die Tatwaffe?'"),
   	writeln("'Leider auch noch nicht, wir hoffen du bekommst das raus.'"),
 	writeln("'Okay - gibt es Zeugen?'"),
@@ -53,5 +54,11 @@ greeting :-
 	writeln("'Danke...'"),
 	nl,
 	writeln("Du betrittst das Haus."),
+	nl,
+	writeln("Im Eingangsbereich steht ein weiterer Beamter und schreibt etwas in sein Notizbuch."),
+	writeln("Er steht neben einer Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint."),
+	writeln("In der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe."),
+	nl,
+	writeln("Das Licht an der Decke flackert nervös."),
 	nl,
 	nl.

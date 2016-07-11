@@ -2,7 +2,6 @@
 
 % alle Zeichen einlesen bis Delimiter
 read_string(Delimiter,String) :- get0(C), name(Delimiter,[DelChar]), read_string(DelChar,C,String).
-
 read_string(DelChar,DelChar,[]) :- !. % get0(10): liest Zeilenumbruchzeichen
 read_string(DelChar,C,RestString) :- C =:= 33, get0(Cnew), read_string(DelChar,Cnew,RestString).
 read_string(DelChar,C,RestString) :- C =:= 44, get0(Cnew), read_string(DelChar,Cnew,RestString).
@@ -10,13 +9,13 @@ read_string(DelChar,C,RestString) :- C =:= 46, get0(Cnew), read_string(DelChar,C
 read_string(DelChar,C,RestString) :- C =:= 63, get0(Cnew), read_string(DelChar,Cnew,RestString).
 read_string(DelChar,C,[C|RestString]) :- get0(Cnew), read_string(DelChar,Cnew,RestString).
 
-% Liste trennen in WÃ¶rter
+% Liste trennen in Wörter
 split_string(_,[],[]).
 split_string(SepChar,CharList,[Chunk|SingleLists]) :- 
 	get_chunk(SepChar,CharList,Chunk,RestCharList),
     split_string(SepChar,RestCharList,SingleLists).
 
-% einzelne WÃ¶rter erkennen
+% einzelne Wörter erkennen
 get_chunk(_,[],[],[]).
 get_chunk(SepChar,[SepChar|RestCharList],[],RestCharList) :- !.
 get_chunk(SepChar,[OtherChar|RestCharList],[OtherChar|RestChunk],UnusedCharList) :-

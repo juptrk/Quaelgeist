@@ -24,7 +24,7 @@ computer_choice(Figure) :- 	random_permutation([stein, papier, schere],[Figure|_
 
 
 %erhaelt 2 Begriffe und schreibt in Konsole, ob Spieler(erster Parameter) gewonnen hat
-result(Spieler,Computer, A) :- beats(Spieler,Computer), writeln('Na gut, du hast gewonnen!'), output(A), !;
+result(Spieler,Computer, A) :- beats(Spieler,Computer), writeln('Na gut, du hast gewonnen!'), output_scheresteinpapier(A), !;
 							beats(Computer, Spieler), writeln('Haha, ich habe gewonnen, wir spielen gleich nochmal!'), scheresteinpapier(A), !;
 							writeln("Unentschieden, gleich nochmal!"), scheresteinpapier(A). %Spieler = Computer
 
@@ -43,4 +43,4 @@ scheresteinpapier(A) :- writeln("Einen Hinweis bekommst du nur, wenn du beim Sch
 		evaluate(Spieler, A).
 
 
-output(["Meine", "Eltern", waren, es, beide, "nicht -", "Eigentlich", "klar,", dann, "würde", ich, hier, ja, nicht, mit, dir, "Spielchen", "spielen."]).
+output_scheresteinpapier(["Meine", "Eltern", waren, es, beide, "nicht -", "Eigentlich", "klar,", dann, "würde", ich, hier, ja, nicht, mit, dir, "Spielchen", "spielen."]).

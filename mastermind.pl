@@ -1,4 +1,5 @@
-:- include('framework.pl').
+
+:- encoding(iso_latin_1).
 code(264).
 
 check_code(Input,Schritt) :- (code(Input), writeln("Du hast den Code geknackt."),
