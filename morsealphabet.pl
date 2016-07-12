@@ -1,5 +1,5 @@
 
-%:- include('read.pl').
+:- include('read.pl').
 :- encoding(iso_latin_1).
 
 morsealphabet :- 
@@ -41,8 +41,8 @@ loesungMorse("..-. --- .-.. --. .  -- .. .-.").
 
 
 %liste random eins auswählen und dann in dynamische liste mit rein und so darauf zugreifen
-befehl1 --> verbpro, leer, pro. %verb und pronomen
-befehl2 --> verbprae, leer, prae. %verb und praeposition
+befehl1 --> verbpro, pro. %verb und pronomen
+befehl2 --> verbprae, prae. %verb und praeposition
 
 
 verbpro --> f,o,l,g,e.
@@ -51,7 +51,7 @@ verbprae --> k,o,m,m,e.
 pro --> m,i,r.
 prae --> m,i,t.
 
-leer --> ["  "].
+%leer --> ["  "].
 
 
 a   -->   [".-"].
@@ -82,21 +82,20 @@ y   -->   ["-.--"].
 z   -->   ["--.."].
 				
 	
-%dynamisches Praedikat: 
-:- retractall(loesung(_)). %brauche ich das hier?
-:- dynamic loesung/1.
-loesung(0).	
 
-%uebersetzung von befehl nch dynamisch merken			
-befehl(Befehl) :- befehl1(A,[]), befehl2(B,[]), random_permutation([A,B],[Befehl|_Restpermut]), 
-				((befehl1(Befehl,[]), retract(loesung(_Old)), assertz(loesung(1)));(befehl2(Befehl,[]), retract(loesung(_Old)), assertz(loesung(2)))).
+
+
+befehl(Befehl,Nummer) :- befehl1(A,[]), befehl2(B,[]), random_permutation([A,B],[Befehl|_Restpermut]), 
+				((befehl1(Befehl,[]), Nummer is 1);(befehl2(Befehl,[]), Nummer is 2)).
 	
-check_morse_uebersetzung(Input) :- retract(loesung(Befehlnummer)),
-								(Befehlnummer = 1, Input = "folge mir", writeln("Super, du hast den Satz richtig übersetzt."));
-								(Befehlnummer = 2, Input = "komme mit", writeln("Super, du hast den Satz richtig übersetzt."));
-								(writeln("Leider falsch übersetzt. Versuch es nocheinmal."), morsen1).
+check_morse_uebersetzung(Input,Nummer):- 
+								(Nummer = 1, Input = [folge, mir], writeln("Super, du hast den Satz richtig übersetzt."));
+								(Nummer = 2, Input = [komme, mit], writeln("Super, du hast den Satz richtig übersetzt."));
+								(writeln("Leider falsch übersetzt. Versuch es nocheinmal."), morsen1(Nummer)).
 
-morsen :- befehl(B), 
+morsen :- befehl(B,Nummer), 
+			writeln(B),
+			writeln(Nummer),
 			nl,
 			writeln("Ich morse dir den nächsten Hinweis, du muss ihn nurnoch übersetzen."),
 			writeln("Hier ist noch das Morsealphabet, damit du es nciht ganz so schwer hast:"),
@@ -104,11 +103,11 @@ morsen :- befehl(B),
 			write("Und hier ist der Satz: "), writeln(B),
 			writeln("Jetzt kannst du loslegen, den Hinweis zu entschlüsseln. Deine Lösung:"),
 			read_sentence(Input), 
-			check_morse_uebersetzung(Input).
+			check_morse_uebersetzung(Input,Nummer).
 
-morsen1 :- writeln("Deine Lösung:"),
-			read(Input), 
-			check_morse_uebersetzung(Input).
+morsen1(Nummer) :- writeln("Deine Lösung:"),
+			read_sentence(Input), 
+			check_morse_uebersetzung(Input,Nummer).
 
 
 
