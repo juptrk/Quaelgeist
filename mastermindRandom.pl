@@ -11,8 +11,6 @@ code([Erste,Zweite,Dritte]) :- random_permutation(['1','2','3','4','5'],[Erste|T
 listen_vergleich([],[]). %Abbruchbedingung
 listen_vergleich([Head1|Tail1],[Head2|Tail2]) :- Head1 = Head2, listen_vergleich(Tail1, Tail2).
 
-%tipp(User3,Letztes, Counter) :- (User3 = Letztes, NewCounter is Counter+1, write("Du hast "), write(NewCounter), writeln("  Zahlen an der richtigen Stelle."));
-%								(write("Du hast "), write(Counter), writeln(" Zahlen an der richtigen Stelle.")).
 tipp([],[],0).
 
 tipp([User|Userrest],[Code|Coderest], Counter) :- (User=Code, tipp(Userrest,Coderest,SubCounter), Counter is SubCounter+1);
