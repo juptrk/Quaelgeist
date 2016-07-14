@@ -150,8 +150,8 @@ moerder(nachbar).
 %moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
 
 
-mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
-		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
+%mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
+%		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
 
 lageplan :- nl,
 			writeln("                LAGEPLAN             "),
