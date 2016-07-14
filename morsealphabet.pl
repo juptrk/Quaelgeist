@@ -31,17 +31,15 @@ morsealphabet :-
 				writeln("Z   -->   --.."),
 				nl.
 
-
-%loesungWorte("Folge mir").
-%loesungMorse("..-. --- .-.. --. .  -- .. .-.").
-
-
 % dann muss man Kind folgen, dieses führt einen in Geheimgang, dort ligt Tatwaffe
 
-
-
+bef --> befehl1.
+bef --> befehl2.
 befehl1 --> verbpro, pro. %verb und pronomen
-befehl2 --> verbprae, prae. %verb und praeposition
+befehl2 --> verbprae, praepro.
+praepro --> prae, pro, prae.
+praepro --> prae, pro.
+praepro --> prae. %praeposition
 
 verbpro --> f,o,l,g,e.
 verbprae --> k,o,m,m,e.
@@ -77,17 +75,21 @@ x   -->   ["-..-"].
 y   -->   ["-.--"].
 z   -->   ["--.."].
 				
-	
 
-befehl(Befehl,Nummer) :- befehl1(A,[]), befehl2(B,[]), random_permutation([A,B],[Befehl|_Restpermut]), 
-				((befehl1(Befehl,[]), Nummer is 1);(befehl2(Befehl,[]), Nummer is 2)).
+welcherBefehl(B,Nummer) :- 
+				((B=["..-.", "---", ".-..", "--.", ".", "--", "..", ".-."], Nummer is 1);
+				(B=["-.-", "---", "--", "--", ".", "--", "..", "-"], Nummer is 2);
+				(B=["-.-", "---", "--", "--", ".", "--", "..", "-", "--", "..", ".-."], Nummer is 3);
+				(B=["-.-", "---", "--", "--", ".", "--", "..", "-", "--", "..", ".-.", "--", "..", "-"], Nummer is 4)). %B ist der Befehl
 	
 check_morse_uebersetzung(Input,Nummer,A):- 
 								(Nummer = 1, Input = [folge, mir], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
 								(Nummer = 2, Input = [komme, mit], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
+								(Nummer = 3, Input = [komme, mit, mir], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
+								(Nummer = 4, Input = [komme, mit, mir, mit], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
 								(writeln("Leider falsch übersetzt. Versuch es nocheinmal."), morsen1(Nummer,A)).
 
-morsen(A) :- befehl(B,Nummer), 
+morsen(A) :-  setof(X,bef(X,[]),Befehlliste), random_permutation(Befehlliste,[B|_Restpermut]), welcherBefehl(B,Nummer),
 			nl,
 			writeln("Ich morse dir den nächsten Hinweis, du muss ihn nurnoch übersetzen."),
 			writeln("Hier ist noch das Morsealphabet, damit du es nciht ganz so schwer hast:"),
