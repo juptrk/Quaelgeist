@@ -344,7 +344,11 @@ ask(Q, A) :-
 ask(Q, A) :-
 	situation(beamter),
 	((member(täter, Q);
-	 member(mörder, Q)),
+	 member(mörder, Q);
+	 member(info, Q);
+	 member(infos, Q);
+	 member(information, Q);
+	 member(informationen, Q)),
 	 nl,
 	 writeln("Ich kann Ihnen nicht sagen wer den Mord tatsächlich begangen hat, aber ich kann Ihnen folgendes sagen:"),
 	 output(taeter_info, A));
