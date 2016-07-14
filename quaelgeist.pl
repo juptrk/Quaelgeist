@@ -461,7 +461,10 @@ ask(Q,A) :-
 	   member(bitte, Input)),
 	 ((scheresteinpapierspiele(X),
 	  X = 0,
-	  scheresteinpapier(A),
+	  ((moerder(T),
+	  	eltern(T),
+	  	scheresteinpapier(A,eltern));
+	  	scheresteinpapier(A,sonstige)),
 	  set_scheresteinpapier);
 	  output(no_hinweis, A)));
 	((member(ja, Input)),
@@ -486,7 +489,7 @@ ask(Q,A) :-
 	  mastermind(A, angestellter));
 	  mastermind(A, sonstige)),
 	  set_mastermind);
-	  output(no_hinweis, A)));
+	  output(no_tipp, A)));
 	((member(ja, Input)),
 	  not(member(bitte, Input)),
 	  output(no_bitte, A));
@@ -530,7 +533,7 @@ ask(Q,["Nein,", das, hier, ist, nicht, Word, "-", das, sieht, man, "doch."]) :-
 	not(person('Du', Location)),
 	location(Location, Word).
 
-ask(Q,["bitte,", ich, geh, dann, "mal."]) :-
+ask(Q,["Bitte,", ich, beende, jetzt, das, "Gespräch,", ich, will, lieber, "spielen."]) :-
 	situation(kind),
 	member(danke, Q),
 	person('Du', Location),

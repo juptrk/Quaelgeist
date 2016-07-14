@@ -1,4 +1,4 @@
-%Aufgabe 2 scheresteinpapier-Echse-Spock
+:- encoding(iso_latin_1).
 
 % (statische) Wissensbasis
 
@@ -24,23 +24,25 @@ computer_choice(Figure) :- 	random_permutation([stein, papier, schere],[Figure|_
 
 
 %erhaelt 2 Begriffe und schreibt in Konsole, ob Spieler(erster Parameter) gewonnen hat
-result(Spieler,Computer, A) :- beats(Spieler,Computer), writeln('Na gut, du hast gewonnen!'), output_scheresteinpapier(A), !;
-							beats(Computer, Spieler), writeln('Haha, ich habe gewonnen, wir spielen gleich nochmal!'), scheresteinpapier(A), !;
-							writeln("Unentschieden, gleich nochmal!"), scheresteinpapier(A). %Spieler = Computer
+result(Spieler,Computer, A, T) :- beats(Spieler,Computer), writeln('Na gut, du hast gewonnen!'), output_scheresteinpapier(T, A), !;
+							beats(Computer, Spieler), writeln('Haha, ich habe gewonnen, wir spielen gleich nochmal!'), scheresteinpapier(A, T), !;
+							writeln("Unentschieden, gleich nochmal!"), scheresteinpapier(A, T). %Spieler = Computer
 
 
 %wenn die Eingabe des Spielers einer der zulaessigen Begriffe ist, dann wird eine Computerwahl generiert und das Resultat des Spiels ausgegeben
 %ohne Cut wird die Anfrage nciht direkt mit Punkt beendet.
-evaluate(Spieler, A) :- 	figure(Spieler), computer_choice(Computer), result(Spieler,Computer, A), !;
+evaluate(Spieler, A, T) :- 	figure(Spieler), computer_choice(Computer), result(Spieler,Computer, A, T), !;
 %Eingabe ist kein zulaessigeer Begriff
-						writeln("Das kannst du nicht auswÃ¤hlen."), scheresteinpapier(A).
+						writeln("Das kannst du nicht auswählen."), scheresteinpapier(A).
 
 
 %neuer Versuch wird gestartet
-scheresteinpapier(A) :- writeln("Einen Hinweis bekommst du nur, wenn du beim Schere-Stein-Papier gewinnst."),
+scheresteinpapier(A, T) :- writeln("Einen Hinweis bekommst du nur, wenn du beim Schere-Stein-Papier gewinnst."),
 		writeln("Such eins aus: Stein, Papier oder Schere."),
 		read_sentence([Spieler|_Tail]), 
-		evaluate(Spieler, A).
+		((member(Spieler,[schere, stein, papier]),evaluate(Spieler, A, T));
+			scheresteinpapier(A,T)).
+		
 
-
-output_scheresteinpapier(["Meine", "Eltern", waren, es, beide, "nicht -", "Eigentlich", "klar,", dann, "wÃ¼rde", ich, hier, ja, nicht, mit, dir, "Spielchen", "spielen."]).
+output_scheresteinpapier(eltern, ["Ich hätte", nie, "gedacht,", dass, ich, mal, so, "persönlich", und, "familiär", in, einen, "Mord", verwickelt, sein, "würde."]).%einer der Eltern war es
+output_scheresteinpapier(sonstige, ["Meine", "Eltern", waren, es, beide, "nicht -", "Eigentlich", "klar,", dann, "würde", ich, hier, ja, nicht, mit, dir, "Spielchen", "spielen."]).
