@@ -1,5 +1,4 @@
 
-:- include('read.pl').
 :- encoding(iso_latin_1).
 
 morsealphabet :- 
@@ -33,8 +32,8 @@ morsealphabet :-
 				nl.
 
 
-loesungWorte("Folge mir").
-loesungMorse("..-. --- .-.. --. .  -- .. .-.").
+%loesungWorte("Folge mir").
+%loesungMorse("..-. --- .-.. --. .  -- .. .-.").
 
 
 % dann muss man Kind folgen, dieses führt einen in Geheimgang, dort ligt Tatwaffe
@@ -88,14 +87,12 @@ z   -->   ["--.."].
 befehl(Befehl,Nummer) :- befehl1(A,[]), befehl2(B,[]), random_permutation([A,B],[Befehl|_Restpermut]), 
 				((befehl1(Befehl,[]), Nummer is 1);(befehl2(Befehl,[]), Nummer is 2)).
 	
-check_morse_uebersetzung(Input,Nummer):- 
-								(Nummer = 1, Input = [folge, mir], writeln("Super, du hast den Satz richtig übersetzt."));
-								(Nummer = 2, Input = [komme, mit], writeln("Super, du hast den Satz richtig übersetzt."));
-								(writeln("Leider falsch übersetzt. Versuch es nocheinmal."), morsen1(Nummer)).
+check_morse_uebersetzung(Input,Nummer,A):- 
+								(Nummer = 1, Input = [folge, mir], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
+								(Nummer = 2, Input = [komme, mit], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
+								(writeln("Leider falsch übersetzt. Versuch es nocheinmal."), morsen1(Nummer,A)).
 
-morsen :- befehl(B,Nummer), 
-			writeln(B),
-			writeln(Nummer),
+morsen(A) :- befehl(B,Nummer), 
 			nl,
 			writeln("Ich morse dir den nächsten Hinweis, du muss ihn nurnoch übersetzen."),
 			writeln("Hier ist noch das Morsealphabet, damit du es nciht ganz so schwer hast:"),
@@ -103,18 +100,11 @@ morsen :- befehl(B,Nummer),
 			write("Und hier ist der Satz: "), writeln(B),
 			writeln("Jetzt kannst du loslegen, den Hinweis zu entschlüsseln. Deine Lösung:"),
 			read_sentence(Input), 
-			check_morse_uebersetzung(Input,Nummer).
+			check_morse_uebersetzung(Input,Nummer,A).
 
-morsen1(Nummer) :- writeln("Deine Lösung:"),
+morsen1(Nummer,A) :- writeln("Deine Lösung:"),
 			read_sentence(Input), 
-			check_morse_uebersetzung(Input,Nummer).
+			check_morse_uebersetzung(Input,Nummer,A).
 
 
-
-
-
-
-
-
-%befehl ausgeben und user uebersetzung eingeben lassen , diese mit dynamsciher vergleichen
-%retract(loseung(X)), X=1, Input=["folge"," ","mir"].
+output_morsen(["Also,", dann, folge, mir, "mal,", ich, zeige, dir, "was.", "Das", wird, dich, von, den, "Socken", "hauen."]).

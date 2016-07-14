@@ -1,6 +1,7 @@
 :- include('framework.pl').
 :- include('scheresteinpapier.pl').
 :- include('mastermindRandom.pl').
+:- include('morsealphabet.pl').
 :- encoding(iso_latin_1).
 
 
@@ -72,6 +73,17 @@ set_scheresteinpapier :-
 	retract(scheresteinpapierspiele(AlteAnzahl)),
 	NeueAnzahl is AlteAnzahl+1, 
 	assertz(scheresteinpapierspiele(NeueAnzahl)).
+
+
+:- retractall(morsespiele(_)).
+:- dynamic morsespiele/1.
+morsespiele(0).
+
+set_morsespiele :-
+	retract(morsespiele(AlteAnzahl)),
+	NeueAnzahl is AlteAnzahl+1, 
+	assertz(morsespiele(NeueAnzahl)).
+
 
 :- dynamic alter_antwort/1.
 alter_antwort(["8"]).
@@ -216,10 +228,10 @@ normal(X) :- member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimme
 match([ok], [stell, ruhig, munter, weiter, "Fragen,", ich, schaue, "dann,", ob, ich, sie, dir, beantworten, "will."]) :-
 	situation(kind).
 
-match([wie, hast, du, den, mord, gesehen],[ich, bin, ein, meister, im, verstecken]) :-
+match([wie, hast, du, den, mord, gesehen],["Ich", bin, ein, "Meister", im, "Verstecken."]) :-
 	situation(kind).
 
-match([war, es, _, _], [so, einfach, mache, ich, es, dir, nicht]) :-
+match([war, es, _, _], ["So", einfach, mache, ich, es, dir, "nicht!"]) :-
 	situation(kind).
 
 match(Input, Output) :-
@@ -418,6 +430,28 @@ ask(Q,A) :-
 	output(no, A)).
 
 
+
+ask(Q,A) :-
+	situation(kind),
+	(member(hilfe, Q); member(helfen, Q); member(hilfestellung, Q)),
+	nl,
+	writeln("Brauchst du meine Hilfe?"),
+	nl,
+	read_sentence(Input),
+	((((member(ja, Input),
+	   member(bitte, Input));
+	   member(bitte, Input)),
+	 ((morsespiele(X),
+	  X = 0,
+	  morsen(A),
+	  set_morsespiele);
+	  output(no_hilfe, A)));
+    ((member(ja, Input)),
+      not(member(bitte, Input)),
+      output(no_bitte, A));
+	output(no, A)).
+
+
 ask(Q,["Ich", "weiß", "selber,", dass, das, Word, "ist!"]) :-
 	situation(kind),
 	normal(Location),
@@ -570,6 +604,7 @@ output(beamter, ["Du", sprichst, den, "Beamten", im, "Eingangsbereich", "an.",
 output(no, ["Okay,", dann, eben, "nicht."]).
 output(no_hinweis, ["Einen", weiteren, "Hinweis", musst, du, dir, erst, "erarbeiten."]).
 output(no_tipp, ["Ich", gebe, dir, jetzt, keinen, weiteren, "Tipp."]).
+output(no_hilfe, ["Ich", habe, gerade, keine, "Lust", dir, zu, "helfen."]).
 output(no_bitte, ["Ohne", "Bitte", geht, hier, "garnichts -" , "Deine", "Eltern", haben, bei, der, "Erziehung", ja, mal, voll, "versagt."]).
 output(help, ["Ich", hoffe, ich, konnte, dir, "helfen."]).
 output(nothing, []).
