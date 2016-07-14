@@ -46,7 +46,7 @@ check_code(Input,Code,Schritt, A, T) :- (listen_vergleich(Input,Code), writeln("
 					%	mastermind1(Schritt, Code)); %dann sind nur noch diese zwei Kombis möglich: 264 und 462
 					%(writeln("Leider falsch."), mastermind1(Schritt, Code)). %alle andere Zustände
 
-mastermind(A) :- code(Code),
+mastermind(A, T) :- code(Code),
 			writeln("Ich habe mir einen Code ausgedacht, er besteht aus 3 Zahlen (1-5)."),
 			writeln("Jede Zahl darf nur einmal vorkommen."),
 			writeln("Du errätst meinen 3-stelligen Code nie. Was ist deine Idee?"),
