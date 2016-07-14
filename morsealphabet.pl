@@ -1,4 +1,4 @@
-
+%:- include('read.pl').
 :- encoding(iso_latin_1).
 
 morsealphabet :- 
@@ -39,18 +39,15 @@ morsealphabet :-
 % dann muss man Kind folgen, dieses führt einen in Geheimgang, dort ligt Tatwaffe
 
 
-%liste random eins auswählen und dann in dynamische liste mit rein und so darauf zugreifen
+
 befehl1 --> verbpro, pro. %verb und pronomen
 befehl2 --> verbprae, prae. %verb und praeposition
-
 
 verbpro --> f,o,l,g,e.
 verbprae --> k,o,m,m,e.
 
 pro --> m,i,r.
 prae --> m,i,t.
-
-%leer --> ["  "].
 
 
 a   -->   [".-"].
@@ -81,8 +78,6 @@ y   -->   ["-.--"].
 z   -->   ["--.."].
 				
 	
-
-
 
 befehl(Befehl,Nummer) :- befehl1(A,[]), befehl2(B,[]), random_permutation([A,B],[Befehl|_Restpermut]), 
 				((befehl1(Befehl,[]), Nummer is 1);(befehl2(Befehl,[]), Nummer is 2)).
