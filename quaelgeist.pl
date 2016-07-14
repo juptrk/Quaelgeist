@@ -135,6 +135,12 @@ taeter(koch).
 taeter(nachbar).
 taeter(besuch).
 
+eltern(vater).
+eltern(mutter).
+
+angestellte(gaertner).
+angestellte(koch).
+
 alle_taeter(Taeter) :- setof(T, taeter(T), Taeter).
 
 %Mord 
@@ -208,27 +214,30 @@ verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A) :- (moe
 
 random_answer(Situation, Head) :- 
 	normal(Situation),
-	random_permutation([["Ich", denke, nicht, dass, wir, jetzt, darüber, reden, "sollten."],
-						["Bitte", denke, nocheinmal, über, deinen, nächsten, "Schritt", "nach."],
-						["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, "'bye'", "eingeben."]],
-					   [Head|_]).
+	random_permutation([
+		["Ich", denke, nicht, dass, wir, jetzt, darüber, reden, "sollten."],
+		["Bitte", denke, nocheinmal, über, deinen, nächsten, "Schritt", "nach."],
+		["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, "'bye'", "eingeben."]],
+		[Head|_]).
 
 random_answer(kind, Head) :- 
-	random_permutation([["Hey,", du, willst, etwas, von, "mir,", stell, eine, sinnvolle, "Frage!"],
-						["Darauf", will, ich, dir, gerade, nicht, "antworten."],
-						["Willst", du, unser, "Gespräch", etwa, schon, "beenden?", "Dann", sag, das, doch, "einfach."]],
-					   [Head|_]).
+	random_permutation([
+		["Hey,", du, willst, etwas, von, "mir,", stell, eine, sinnvolle, "Frage!"],
+		["Darauf", will, ich, dir, gerade, nicht, "antworten."],
+		["Willst", du, unser, "Gespräch", etwa, schon, "beenden?", "Dann", sag, das, doch, "einfach."]],
+		[Head|_]).
 
 
 % Situation: normal
 
-normal(X) :- member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
+normal(X) :- 
+	member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
 
 
 match([ok], [stell, ruhig, munter, weiter, "Fragen,", ich, schaue, "dann,", ob, ich, sie, dir, beantworten, "will."]) :-
 	situation(kind).
 
-match([wie, hast, du, den, mord, gesehen],["Ich", bin, ein, "Meister", im, "Verstecken."]) :-
+match([wie, hast, du, den, mord, gesehen], ["Ich", bin, ein, "Meister", im, "Verstecken."]) :-
 	situation(kind).
 
 match([war, es, _, _], ["So", einfach, mache, ich, es, dir, "nicht!"]) :-
@@ -243,8 +252,9 @@ match(_, Answer) :-
 	random_answer(Situation, Answer).
 
 
-ask(Q,["Dort", bist, du, doch, "bereits!"]) :-
+ask(Q,["Dort", bist, du, doch, "bereits!"]) :- 
 	not(situation(kind)),
+	not(situation(beamter)),
 	normal(Location),
 	member(Location, Q),
 	person('Du', Location).
@@ -252,94 +262,135 @@ ask(Q,["Dort", bist, du, doch, "bereits!"]) :-
 
 ask(Q,A) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(garten, Q),
 	nl,
 	writeln("Willst du wirklich in den Garten gehen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	output(garten, A),
-	change_situation(garten));
-	output(no, A)).
+	(
+		(
+			member(ja, Input),
+			output(garten, A),
+			change_situation(garten)
+			);
+		output(no, A)
+		).
 
 ask(Q,A) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(arbeitszimmer, Q),
 	nl,
 	writeln("Willst du wirklich in das Arbeitszimmer gehen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	output(arbeitszimmer, A),
-	change_situation(arbeitszimmer));
-	output(no, A)).
+	(
+		(
+			member(ja, Input),
+			output(arbeitszimmer, A),
+			change_situation(arbeitszimmer)
+			);
+		output(no, A)
+		).
 
 ask(Q,A) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(kueche, Q),
 	nl,
 	writeln("Willst du wirklich in die Kueche gehen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	output(kueche, A),
-	change_situation(kueche));
-	output(no, A)).
+	(
+		(
+			member(ja, Input),
+			output(kueche, A),
+			change_situation(kueche)
+			);
+		output(no, A)
+		).
 
 ask(Q,A) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(schlafzimmer, Q),
 	nl,
 	writeln("Willst du wirklich in das Schlafzimmer gehen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	output(schlafzimmer, A),
-	change_situation(schlafzimmer));
-	output(no, A)).
+	(
+		(
+			member(ja, Input),
+			output(schlafzimmer, A),
+			change_situation(schlafzimmer)
+			);
+		output(no, A)
+		).
 
 ask(Q,A) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(wohnzimmer, Q),
 	nl,
 	writeln("Willst du wirklich in das Wohnzimmer gehen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	output(wohnzimmer, A),
-	change_situation(wohnzimmer));
-	output(no, A)).
+	(
+		(
+			member(ja, Input),
+			output(wohnzimmer, A),
+			change_situation(wohnzimmer)
+			);
+		output(no, A)
+		).
 
 ask(Q,A) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(eingangsbereich, Q),
 	nl,
 	writeln("Willst du wirklich in den Eingangsbereich gehen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	 ((person('Beamter', eingangsbereich),
-	   output(eingangsbereich_beamter, A));
-	   output(eingangsbereich, A)),
-	change_situation(eingangsbereich));
-	output(no, A)).
+	(
+		(
+			member(ja, Input),
+			(
+				(
+					person('Beamter', eingangsbereich),
+					output(eingangsbereich_beamter, A)
+					);
+				output(eingangsbereich, A)
+				),
+			change_situation(eingangsbereich)
+			);
+		output(no, A)
+		).
 
 ask(Q, A) :-
 	person('Beamter', eingangsbereich),
 	situation(eingangsbereich),
-	(member(beamter, Q);
-	 member(beamten, Q);
-	 member(polizisten, Q);
-	 member(polizist, Q)),
+	(
+		member(beamter, Q);
+		member(beamten, Q);
+		member(polizisten, Q);
+		member(polizist, Q)
+		),
 	nl,
 	writeln("Willst du den Beamten ansprechen?"),
 	nl,
 	read_sentence(Input),
-	((member(ja, Input),
-	  output(beamter, A),
-      retract(person('Beamter', _)),
-	  change_situation(beamter));
-     output(no, A)).
+	(
+		(
+			member(ja, Input),
+			output(beamter, A),
+			retract(person('Beamter', _)
+				),
+			change_situation(beamter)
+			);
+		output(no, A)
+		).
 
 ask(Q, A) :-
 	situation(beamter),
@@ -356,6 +407,29 @@ ask(Q, A) :-
 	member(tatverdächtige, Q);
 	member(tatverdächtiger, Q)),
 	output(taeter_info, A)).
+
+ask(Q,A) :-
+	situation(beamter),
+	(member(beenden, Q);
+		member(tschuess, Q);
+	 	member(gehen, Q);
+	 	member(ende, Q);
+	 	member(wiedersehen, Q);
+	 	member(danke, Q)),
+	nl,
+	writeln("Kann ich Ihnen sonst noch behilflich sein?"),
+	nl,
+	read_sentence(Input),
+	(
+		(
+			(
+				member(nein, Input);
+				member(danke, Input)),
+			person('Du', Location),
+			change_situation(Location),
+			output(gespraech_ende, A));
+		output(beamter_stay, A)
+		).
 
 
 
@@ -377,24 +451,6 @@ ask(Q, A) :-
 
 ask(Q,A) :-
 	situation(kind),
-	(member(beenden, Q);
-	 member(tschuess, Q);
-	 member(gehen, Q);
-	 member(ende, Q);
-	 member(wiedersehen, Q)),
-	nl,
-	writeln("Willst du unser Gespräch etwa einfach so beenden?"),
-	nl,
-	read_sentence(Input),
-	((member(ja, Input),
-	 person('Du', Location),
-	 change_situation(Location),
-	 output(gespraech_ende, A));
-	 output(no, A)).
-
-
-ask(Q,A) :-
-	situation(kind),
 	member(hinweis, Q),
 	nl,
 	writeln("Willst du einen Hinweis von mir?"),
@@ -408,9 +464,9 @@ ask(Q,A) :-
 	  scheresteinpapier(A),
 	  set_scheresteinpapier);
 	  output(no_hinweis, A)));
-    ((member(ja, Input)),
-      not(member(bitte, Input)),
-      output(no_bitte, A));
+	((member(ja, Input)),
+	  not(member(bitte, Input)),
+	  output(no_bitte, A));
 	output(no, A)).
 
 ask(Q,A) :-
@@ -425,12 +481,15 @@ ask(Q,A) :-
 	   member(bitte, Input)),
 	 ((mastermindspiele(X),
 	  X = 0,
-	  mastermind(A),
+	  ((moerder(T),
+	  angestellte(T),
+	  mastermind(A, angestellter));
+	  mastermind(A, sonstige)),
 	  set_mastermind);
 	  output(no_hinweis, A)));
-    ((member(ja, Input)),
-      not(member(bitte, Input)),
-      output(no_bitte, A));
+	((member(ja, Input)),
+	  not(member(bitte, Input)),
+	  output(no_bitte, A));
 	output(no, A)).
 
 
@@ -450,9 +509,9 @@ ask(Q,A) :-
 	  morsen(A),
 	  set_morsespiele);
 	  output(no_hilfe, A)));
-    ((member(ja, Input)),
-      not(member(bitte, Input)),
-      output(no_bitte, A));
+	((member(ja, Input)),
+	  not(member(bitte, Input)),
+	  output(no_bitte, A));
 	output(no, A)).
 
 
@@ -479,6 +538,23 @@ ask(Q,["bitte,", ich, geh, dann, "mal."]) :-
 
 ask(Q,A) :-
 	situation(kind),
+	(member(beenden, Q);
+	 member(tschuess, Q);
+	 member(gehen, Q);
+	 member(ende, Q);
+	 member(wiedersehen, Q)),
+	nl,
+	writeln("Willst du unser Gespräch etwa einfach so beenden?"),
+	nl,
+	read_sentence(Input),
+	((member(ja, Input),
+	 person('Du', Location),
+	 change_situation(Location),
+	 output(gespraech_ende, A));
+	 output(no, A)).
+
+ask(Q,A) :-
+	situation(kind),
 	(member(alt, Q);
 	 member(alter, Q)),
 	nl,
@@ -502,7 +578,7 @@ ask(Q,A) :-
 	nl,
 	read_sentence(Input),
 	((member(ja, Input),
-      name_antwort(A),
+	  name_antwort(A),
 	  retract(name_antwort(A)),
 	  assertz(name_antwort(["Kannst", du, dir, nichtmal, meinen, "Namen", "merken?"])));
 	output(no, A)).
@@ -510,16 +586,19 @@ ask(Q,A) :-
 
 ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(opfer, Q).
 
 ask(Q, A) :- 
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(lageplan, Q),
 	lageplan,
 	output(help, A).
 
 ask(Q, A) :- 
 	not(situation(kind)),
+	not(situation(beamter)),
 	member(tatorte, Q),
 	nl,
 	writeln("Alle Räume im Haus kommen als Tatort in Frage:"),
@@ -616,6 +695,6 @@ output(solved, ["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","
 output(wrong_suspicion, ["Dieser", "Verdacht", ist, leider, "falsch,", versuche, es, "später", "nochmal!", "Du", hast, noch, Anzahl, "Verdächtigungsversuche", "übrig."]) :-
 	verdaechtigungszahl(AlteAnzahl),
 	Anzahl is 2 - AlteAnzahl.
-
+output(beamter_stay, ["Okay,", was, wollen, sie, "wissen?"]).
 %enter_text()
 
