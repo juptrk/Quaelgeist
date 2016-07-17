@@ -26,6 +26,18 @@ change_situation(NewSituation) :-
 	assertz(situation(NewSituation)).
 
 
+:- retractall(was_there(_)).
+:- dynamic was_there/1.
+
+was_there(eingangsbereich).
+
+add_location(NewLocation) :-
+	ort(NewLocation),
+	not(was_there(NewLocation)),
+	assertz(was_there(NewLocation)).
+	
+
+
 % definiert die personen, mit denen man interagieren kann und sich selbst
 :- retractall(person(_)).
 :- dynamic person/2.
@@ -132,16 +144,17 @@ randomize_child :-
 	increase_counter.
 
 %Wissensbasis
-location(eingangsbereich, 'der Eingangsbereich').
-location(schlafzimmer, 'das Schlafzimmer').
-location(küche, 'die Kueche').
-location(garten, 'der Garten').
-location(wohnzimmer, 'das Wohnzimmer').
-location(arbeitszimmer, 'das Arbeitszimmer').
+location(eingangsbereich, 'der Eingangsbereich', 'den Eingangsbereich').
+location(eingangsbereich_beamter, 'der Eingangsbereich', 'den Eingangsbereich').
+location(schlafzimmer, 'das Schlafzimmer', 'das Schlafzimmer').
+location(küche, 'die Küche', 'die Küche').
+location(garten, 'der Garten', 'den Garten').
+location(wohnzimmer, 'das Wohnzimmer', 'das Wohnzimmer').
+location(arbeitszimmer, 'das Arbeitszimmer', 'das Arbeitszimmer').
 
 ort(eingangsbereich).
 ort(schlafzimmer).
-ort(küche).
+ort(kueche).
 ort(garten).
 ort(wohnzimmer).
 ort(arbeitszimmer).
@@ -174,7 +187,7 @@ angestellte(koch).
 alle_taeter(Taeter) :- setof(T, taeter(T), Taeter).
 
 %Mord 
-tatort(wohnzimmer).
+tatort(arbeitszimmer).
 tatwaffe(seil).
 moerder(nachbar).
 
@@ -305,10 +318,49 @@ random_answer(kind, Head) :-
 		[Head|_]).
 
 
+gerichtsmediziner(Loc,A) :-
+	(
+		was_there(eingangsbereich),
+		was_there(garten),
+		was_there(kueche),
+		was_there(arbeitszimmer),
+		was_there(wohnzimmer),
+		was_there(schlafzimmer),
+		gerichtsmediziner_output(Loc, A)
+		);
+	output(Loc, A).
+
+gerichtsmediziner_output(Loc, ["Dann", setzt, du, deine, "Suche", "fort."]) :-
+	location(Loc, _, Word),
+	tatort(Tatort),
+	tatort_tipp(Tatort, Tipp),
+	nl,
+	write("Als du "), write(Word), writeln(" betrittst, klingelt dein Handy."),
+	nl,
+	writeln("'Hallo?'"),
+	writeln("'Guten Tag, Frank von der Gerichtsmedizin hier. "), 
+	write(Tipp), writeln("'"),
+	writeln("'Vielen Dank. Sonst noch etwas?'"),
+	writeln("'Nein.'"),
+	writeln("'Okay, vielen Dank nocheinmal - Einen schönen Tag Ihnen noch.'"),
+	writeln("'Ebenso.'"),
+	nl,
+	writeln("Du legst auf und überlegst kurz, was dieser Hinweis bedeuten kann.").
+
+
+tatort_tipp(wohnzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Sofafusseln gefunden haben.").
+tatort_tipp(garten, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Grasreste gefunden haben.").
+tatort_tipp(arbeitszimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Papierschnipsel - scheinbar aus einem Aktenvernichter - gefunden haben.").
+tatort_tipp(eingangsbereich, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Schlammreste gefunden haben.").
+tatort_tipp(eingangsbereich_beamter, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Schlammreste gefunden haben.").
+tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
+tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
+
+
 % Situation: normal
 
 normal(X) :- 
-	member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
+	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
 
 
 match([ok], [stell, ruhig, munter, weiter, "Fragen,", ich, schaue, "dann,", ob, ich, sie, dir, beantworten, "will."]) :-
@@ -351,9 +403,10 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			output(garten, A),
 			change_situation(garten),
-			randomize_child
+			add_location(garten),
+			randomize_child,
+			output(garten, A)
 			);
 		output(no, A)
 		).
@@ -369,9 +422,10 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			output(arbeitszimmer, A),
 			change_situation(arbeitszimmer),
-			randomize_child
+			add_location(arbeitszimmer),
+			randomize_child,
+			gerichtsmediziner(arbeitszimmer, A)
 			);
 		output(no, A)
 		).
@@ -387,9 +441,10 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			output(kueche, A),
 			change_situation(kueche),
-			randomize_child
+			add_location(kueche),
+			randomize_child,
+			gerichtsmediziner(kueche, A)
 			);
 		output(no, A)
 		).
@@ -405,9 +460,10 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			output(schlafzimmer, A),
 			change_situation(schlafzimmer),
-			randomize_child
+			add_location(schlafzimmer),
+			randomize_child,
+			gerichtsmediziner(schlafzimmer, A)
 			);
 		output(no, A)
 		).
@@ -423,9 +479,10 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			output(wohnzimmer, A),
 			change_situation(wohnzimmer),
-			randomize_child
+			add_location(wohnzimmer),
+			randomize_child,
+			gerichtsmediziner(wohnzimmer, A)
 			);
 		output(no, A)
 		).
@@ -444,9 +501,9 @@ ask(Q, A) :-
 			(
 				(
 					person('Beamter', eingangsbereich),
-					output(eingangsbereich_beamter, A)
+					gerichtsmediziner(eingangsbereich_beamter, A)
 					);
-				output(eingangsbereich, A)
+				gerichtsmediziner(eingangsbereich, A)
 				),
 			change_situation(eingangsbereich),
 			randomize_child
@@ -775,13 +832,13 @@ ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
 	not(situation(beamter)),
 	member(opfer, Q).
 
-ask(Q, A) :- 
+ask(Q, []) :- 
 	not(situation(kind)),
 	not(situation(beamter)),
 	member(lageplan, Q),
 	lageplan.
 
-ask(Q, A) :- 
+ask(Q, []) :- 
 	not(situation(kind)),
 	not(situation(beamter)),
 	(
@@ -815,8 +872,6 @@ ask(Q, A) :-
 			);
 		output(no, A)
 		).
-
-
 
 
 output(garten,
