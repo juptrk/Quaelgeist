@@ -85,6 +85,7 @@ set_geheimgangGewesen :-
 	NeueAnzahl is AlteAnzahl+1, 
 	assertz(geheimgangGewesen(NeueAnzahl)).
 
+
 :- retractall(mastermindspiele(_)).
 :- dynamic mastermindspiele/1.
 
@@ -555,7 +556,7 @@ ask(Q, A) :-
 	morsespiele(X),
 	not(X=0),
 	geheimgangGewesen(Y),
-	((Y=0,
+	not(Y>0),
 	nl,
 	writeln("Willst du wirklich in den Geheimgang gehen?"),
 	nl,
@@ -565,12 +566,12 @@ ask(Q, A) :-
 			member(ja, Input),
 			output(geheimgang, A),
 			change_situation(geheimgang),
-			%set_geheimgangGewesen,
+			set_geheimgangGewesen,
 			randomize_child
 			);
 		output(no, A)
-		));
-	writeln("Du entscheidest dich dazu nicht nochmal in den Geheimgang zu gehen.")).
+		).
+	%writeln("Du entscheidest dich dazu nicht nochmal in den Geheimgang zu gehen.")).
 
 
 %%%%%%%%%%
@@ -924,7 +925,7 @@ ask(Q,A):-
 	morsespiele(X),
 	not(X=0),
 	geheimgangGewesen(Y),
-	Y=0,
+	not(Y>0),
 	(member(folge, Q);
 		member(folgen, Q);
 		member(mitkommen, Q)
