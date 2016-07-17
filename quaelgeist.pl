@@ -330,12 +330,12 @@ gerichtsmediziner(Loc,A) :-
 		);
 	output(Loc, A).
 
-gerichtsmediziner_output(Loc, ["Dann", setzt, du, deine, "Suche", "fort."]) :-
-	location(Loc, _, Word),
+gerichtsmediziner_output(Loc, A) :-
+	location(Loc, _, _),
 	tatort(Tatort),
 	tatort_tipp(Tatort, Tipp),
 	nl,
-	write("Als du "), write(Word), writeln(" betrittst, klingelt dein Handy."),
+	write("Als du loslaufen willst klingelt dein Handy."),
 	nl,
 	writeln("'Hallo?'"),
 	writeln("'Guten Tag, Frank von der Gerichtsmedizin hier. "), 
@@ -345,7 +345,10 @@ gerichtsmediziner_output(Loc, ["Dann", setzt, du, deine, "Suche", "fort."]) :-
 	writeln("'Okay, vielen Dank nocheinmal - Einen schönen Tag Ihnen noch.'"),
 	writeln("'Ebenso.'"),
 	nl,
-	writeln("Du legst auf und überlegst kurz, was dieser Hinweis bedeuten kann.").
+	writeln("Du legst auf und überlegst kurz, was dieser Hinweis bedeuten kann."),
+	writeln("Dann setzt du deine Suche fort."),
+	output(Loc, A).
+
 
 
 tatort_tipp(wohnzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Sofafusseln gefunden haben.").
