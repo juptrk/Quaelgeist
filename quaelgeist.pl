@@ -81,6 +81,7 @@ set_verdaechtigung :-
 geheimgangGewesen(0).
 
 set_geheimgangGewesen :-
+	geheimgangGewesen(AlteAnzahl),
 	retract(geheimgangGewesen(AlteAnzahl)),
 	NeueAnzahl is AlteAnzahl+1, 
 	assertz(geheimgangGewesen(NeueAnzahl)).
@@ -167,7 +168,7 @@ randomize_child :-
 location(eingangsbereich, 'der Eingangsbereich', 'den Eingangsbereich').
 location(eingangsbereich_beamter, 'der Eingangsbereich', 'den Eingangsbereich').
 location(schlafzimmer, 'das Schlafzimmer', 'das Schlafzimmer').
-location(küche, 'die Küche', 'die Küche').
+location(kueche, 'die Küche', 'die Küche').
 location(garten, 'der Garten', 'den Garten').
 location(wohnzimmer, 'das Wohnzimmer', 'das Wohnzimmer').
 location(arbeitszimmer, 'das Arbeitszimmer', 'das Arbeitszimmer').
@@ -385,7 +386,7 @@ tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde
 % Situation: normal
 
 normal(X) :- 
-	member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
+	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
 
 
 match([wie, geht, es, dir],["Was für eine langweilige Frage von dir."]) :- 
@@ -1072,6 +1073,16 @@ ask(Q, A) :-
 		).
 
 
+<<<<<<< HEAD
+=======
+ask(Q, A) :-
+	(
+		situation(eingangsbereich);
+		situation(eingangsbereich_beamter)
+		),
+	member(kommode, Q),
+	output(kommode, A).
+>>>>>>> origin/master
 	
 
 output(garten,
@@ -1094,7 +1105,7 @@ output(arbeitszimmer,
 
 output(kueche, 
 	["Du", betrittst, die, "Küche.",
-	"\n\nDer", "Raum", ist, beinahe, quadratisch, mit, einer, "großen", "Küchenzeile", auf, der, rechten, und, einer, "Schrankwand", mit, "Kühlschrank", auf, der, linken, "Seite.",
+	"\n\nDer", "Raum", ist, beinahe, quadratisch, mit, einer, "großen", "Küchenzeile", auf, der, "gegenüberliegenden", und, einer, "Schrankwand", mit, "Kühlschrank", auf, der, linken, "Seite.",
 	"\nEin", "Fenster", zum, "Garten", sorgt, "für", viel, "Licht", und, einen, "schönen", "Ausblick", auf, den, "Garten.",
 	"\n\nDie", letzte, "Person,", die, hier, gekocht, "hat,", scheint, nicht, sehr, ordentlich, gewesen, zu, "sein,",
 	"\nden", "überall", liegen, noch, "Reste", der, "Mahlzeit", "herum."]).
@@ -1111,7 +1122,7 @@ output(schlafzimmer,
 
 output(wohnzimmer, 
 	["Du", betrittst, das, "Wohnzimmer.",
-	"\n\nEs", ist, das, "schönste", "Zimmer", des, "Hauses, ", mit, einer, "Sofaecke", und , einem, großen, bodentiefen, "Fenster", durch, das, man, einen, "Blick", auf, den, ganzen, "Garten hat.", 
+	"\n\nEs", ist, das, "schönste", "Zimmer", des, "Hauses, ", mit, einer, "Sofaecke", und , einem, "großen", bodentiefen, "Fenster", durch, das, man, einen, "Blick", auf, den, ganzen, "Garten hat.", 
 	"\nEine", riesige, "Bücherwand", ziert, die, "Längsseite.",
 	"\nDas", beeindruckende, prunkvolles, "Gemälde", an, der, "Wand", direkt, "über", dem, "Sofa", zieht, dich, sofort, in, seinen, "Bann."]
 	).
