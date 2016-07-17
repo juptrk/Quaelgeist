@@ -204,17 +204,17 @@ moerder(nachbar).
 
 lageplan :- nl,
 			writeln("                LAGEPLAN             "),
-			writeln("_____________________________________"),
+			writeln("____/ _______________________________"),
 			writeln("|            |           |           | \\"),
 			writeln("|            |           |           |   \\"),
 			writeln("|            |           |           |     \\"),
 			writeln("|  Eingangs- |  Schlaf-  |  Küche    |       \\"),
 			writeln("|  bereich   |  zimmer   |           |         \\"),
 			writeln("|            |           |           |          |"),
-			writeln("|            |___________|___________|          |"),
+			writeln("|            |____  _____|____  _____|          |"),
 			writeln("|                                    |          |"),
-			writeln("|                                    |  Garten  |"),
-			writeln("|____________________________________|          |"),
+			writeln("|                                       Garten  |"),
+			writeln("|_______  ________________  _________|          |"),
 			writeln("|                 |                  |          |"),
 			writeln("|                 |                  |          |"),
 			writeln("|    Arbeits-     |                  |         /"),
@@ -877,6 +877,14 @@ ask(Q, A) :-
 		).
 
 
+ask(Q, A) :-
+	(
+		situation(eingangsbereich);
+		situation(eingangsbereich_beamter)
+		),
+	member(kommode, Q),
+	
+
 output(garten,
 	["Du", gehst, in, den, "Garten.",
 	"\n\nEr", ist, "wunderschön", und, man, "sieht,", dass, diese, "Familie", einen, "Gärtner", haben, "muss.",
@@ -897,8 +905,10 @@ output(arbeitszimmer,
 
 output(kueche, 
 	["Du", betrittst, die, "Küche.",
-	"\n\nSie", ist, ziemlich, "groß", und, scheint, sehr, gut, "ausgerüstet", zu, "sein."]
-	).
+	"\n\nDer", "Raum", ist, beinahe, quadratisch, mit, einer, "großen", "Küchenzeile", auf, der, rechten, und, einer, "Schrankwand", mit, "Kühlschrank", auf, der, linken, "Seite.",
+	"\nEin", "Fenster", zum, "Garten", sorgt, "für", viel, "Licht", und, einen, "schönen", "Ausblick", auf, den, "Garten.",
+	"\n\nDie", letzte, "Person,", die, hier, gekocht, "hat,", scheint, nicht, sehr, ordentlich, gewesen, zu, "sein,",
+	"\nden", "überall", liegen, noch, "Reste", der, "Mahlzeit", "herum."]).
 
 output(schlafzimmer, 
 	["Du", betrittst, das, "Schlafzimmer.",
