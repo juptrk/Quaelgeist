@@ -75,6 +75,17 @@ set_verdaechtigung :-
 
 
 %dynamisches Praedikat: 
+:- retractall(geheimgangGewesen(_)).
+:- dynamic geheimgangGewesen/1.
+
+geheimgangGewesen(0).
+
+set_geheimgangGewesen :-
+	retract(geheimgangGewesen(AlteAnzahl)),
+	NeueAnzahl is AlteAnzahl+1, 
+	assertz(geheimgangGewesen(NeueAnzahl)).
+
+
 :- retractall(mastermindspiele(_)).
 :- dynamic mastermindspiele/1.
 
@@ -144,6 +155,15 @@ randomize_child :-
 	increase_counter.
 
 %Wissensbasis
+
+%location(eingangsbereich, 'der Eingangsbereich').
+%location(schlafzimmer, 'das Schlafzimmer').
+%location(küche, 'die Küche').
+%location(garten, 'der Garten').
+%location(wohnzimmer, 'das Wohnzimmer').
+%location(arbeitszimmer, 'das Arbeitszimmer').
+%location(geheimgang, 'der Geheimgang').
+
 location(eingangsbereich, 'der Eingangsbereich', 'den Eingangsbereich').
 location(eingangsbereich_beamter, 'der Eingangsbereich', 'den Eingangsbereich').
 location(schlafzimmer, 'das Schlafzimmer', 'das Schlafzimmer').
@@ -151,6 +171,8 @@ location(küche, 'die Küche', 'die Küche').
 location(garten, 'der Garten', 'den Garten').
 location(wohnzimmer, 'das Wohnzimmer', 'das Wohnzimmer').
 location(arbeitszimmer, 'das Arbeitszimmer', 'das Arbeitszimmer').
+location(geheimgang, 'der Geheimgang', 'den Geheimgang').
+
 
 ort(eingangsbereich).
 ort(schlafzimmer).
@@ -198,7 +220,7 @@ moerder(nachbar).
 %tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|_Rest]).
 %moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
 
-
+%um Mord auszugeben
 %mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
 %		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
 
@@ -281,7 +303,7 @@ verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A) :-
 	writeln("Wo wurde die Putzfrau ermordet?"),
 	read_sentence([Ortverdacht|_Tail]), 
 	(
-		location(Ortverdacht, _),
+		location(Ortverdacht, _, _),
 		verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A)
 		);
 	(
@@ -363,16 +385,22 @@ tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde
 % Situation: normal
 
 normal(X) :- 
-	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheim]).
+	member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
 
 
-match([ok], [stell, ruhig, munter, weiter, "Fragen,", ich, schaue, "dann,", ob, ich, sie, dir, beantworten, "will."]) :-
+match([wie, geht, es, dir],["Was für eine langweilige Frage von dir."]) :- 
+	situation(kind).
+
+match([ok], ["Stell", ruhig, munter, weiter, "Fragen,", ich, schaue, "dann,", ob, ich, sie, dir, beantworten, "will."]) :-
 	situation(kind).
 
 match([wie, hast, du, den, mord, gesehen], ["Ich", bin, ein, "Meister", im, "Verstecken."]) :-
 	situation(kind).
 
 match([war, es, _, _], ["So", einfach, mache, ich, es, dir, "nicht!"]) :-
+	situation(kind).
+
+match([hallo], ["Hallo."]) :-
 	situation(kind).
 
 match([wo, ist, alex], [Ort]) :-
@@ -436,18 +464,19 @@ ask(Q, A) :-
 ask(Q, A) :-
 	not(situation(kind)),
 	not(situation(beamter)),
-	member(kueche, Q),
+	member(küche, Q),
 	nl,
-	writeln("Willst du wirklich in die Kueche gehen?"),
+	writeln("Willst du wirklich in die Küche gehen?"),
 	nl,
 	read_sentence(Input),
 	(
 		(
 			member(ja, Input),
-			change_situation(kueche),
-			add_location(kueche),
+			change_situation(küche),
+			add_location(küche),
 			randomize_child,
 			gerichtsmediziner(kueche, A)
+
 			);
 		output(no, A)
 		).
@@ -490,10 +519,12 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
+
 ask(Q, A) :-
 	not(situation(kind)),
 	not(situation(beamter)),
-	member(eingangsbereich, Q),
+	(member(eingangsbereich, Q);
+		member(eingang, Q)),
 	nl,
 	writeln("Willst du wirklich in den Eingangsbereich gehen?"),
 	nl,
@@ -513,6 +544,139 @@ ask(Q, A) :-
 			);
 		output(no, A)
 		).
+
+
+ask(Q, A) :-
+	not(situation(kind)),
+	not(situation(beamter)),
+	(member(geheimgang, Q);
+		member(geheim, Q);
+		member(gang, Q)
+		),
+	morsespiele(X),
+	not(X=0),
+	geheimgangGewesen(Y),
+	not(Y>0),
+	nl,
+	writeln("Willst du wirklich in den Geheimgang gehen?"),
+	nl,
+	read_sentence(Input),
+	(
+		(
+			member(ja, Input),
+			output(geheimgang, A),
+			change_situation(geheimgang),
+			set_geheimgangGewesen,
+			randomize_child
+			);
+		output(no, A)
+		).
+	%writeln("Du entscheidest dich dazu nicht nochmal in den Geheimgang zu gehen.")).
+
+
+%%%%%%%%%%
+% Umschauen in Räumen 
+%%%%%%%%%%
+
+%%%%%%%%%%%%Schlafzimmer
+ask(Q,["Du", habst, die, "Bettdecke", an, und, darunter, liegt, eine, zusammengerollte, "Katze", und, "schläft."]) :-
+	situation(schlafzimmer),
+	(member(bett,Q);
+		member(decke,Q);
+		member(bettdecke, Q);
+		member(wölbung, Q)
+		).
+
+ask(Q,["Du", kraulst, die, "Katze", und, sie, schnurrt, zufrieden, vor, sich, "hin."]) :-
+	situation(schlafzimmer),
+	member(katze,Q).
+
+ask(Q,["Du", gehst, zum, "Nachtisch", und, betrachtest, die, "Uhr", genauer, und, stellst, "fest,", dass, sie, sehr, alt, "ist.", "\nVermutlich", ein, "Erbstück,", daher, passt, sie, nicht, zum, modernen, "Rest", des, "Zimmers.", "\nDa", bemerkst, "du,", dass, die, "Uhr", auf, einem, dicken, "Buch", "steht."]) :-
+	situation(schlafzimmer),
+	(member(nachttisch,Q);
+		member(tisch,Q);
+		member(uhr, Q)
+		).
+
+ask(Q,["Das Buch trägt den Titel: Das perfekte Verbrechen."]) :-
+	situation(schlafzimmer),
+	member(buch,Q).
+
+ask(Q,["Du", öffnest, den, "Schrank", und, bist, von, der, "Fülle", an, "Klamotten", "beeindruckt -", "Hemden, Hosen, Kleider, Taschen, Schuhe, Krawatten-", in, allen, möglichen, "Farben und Mustern.", "\nWährend", du, noch, ganz, fasziniert, die, "Kleidung", "begutachtest,", fällt, die, plötzlich, "auf,", dass, sich, hinten, im, "Schrank", eine, versteckte, "Türe", "befindet."]) :-
+	situation(schlafzimmer),
+	(member(schrank,Q);
+		member(kleiderschrank,Q);
+		member(sschrenktür, Q)
+		).
+
+ask(Q,["Du versuchst die Türe zu öffnen, du rüttelst kräftig daran, doch leider beibst du dabei erfolglos."]) :-
+	situation(schlafzimmer),
+	(member(türe,Q);
+		member(tür,Q);
+		member(versuchen, Q) %falls jemand es nochmal versuchen will die Tuere zu oeffnen
+		).
+
+ask(Q, ["Ein Schlüssel für die Türe im Schrank ist weit und breit nicht zu sehen."]) :-
+	situation(schlafzimmer),
+	member(schlüssel, Q).
+
+%%%%%%%%%%%%Wohnzimmer
+ask(Q, ["Das bequeme weiße Sofa sieht wie frisch gereinigt aus, kein noch so kleiner Fleck ist zu sehen."]) :-
+	situation(wohnzimmer),
+	(member(sofa,Q);
+		member(kissen,Q);
+		member(sofaecke,Q)
+		).
+
+ask(Q, ["Von hier hat man den gesamten Garten gut im Überblick.", "\nDie Fensterscheiben sind so getönt, dass man gut raus schauen kann, aber niemand vom Garten reinschauen kann."]) :-
+	situation(wohnzimmer),
+	member(fenster, Q).
+
+ask(Q, ["Du schaust dir die Bücher an - eine Brockhaus Enzyklopädie, ein Atlas, ein paar Romane, hier und dort ein Kinderbuch - nicht weiter interessant."]) :-
+	situation(wohnzimmer),
+	(member(bücherwand,Q);
+		member(bücher,Q);
+		member(buch,Q);
+		member(bücherregal, Q)
+		).
+
+ask(Q, ["Ein Buch zu lesen ist jetzt keine gute Idee, du musst einen Fall lösen, sonst bist du deinen Job los."]) :-
+	situation(wohnzimmer),
+	member(lesen, Q).
+
+
+ask(Q, A) :-
+	situation(wohnzimmer),
+	(member(gemälde, Q);
+		member(bild, Q)
+		),
+	writeln("Auf dem Bild sind 2 Reiter auf Pferden zu sehen."),
+	nl,
+	morsespiele(X),
+	(X=0, output(geheimunbekannt, A);
+		output(geheimbekannt, A)).
+
+
+%%%%%%%%%%%%%%Geheimgang
+
+ask(Q,["Du gehst näher heran, bückst dich und hebst einen blutverschmierten Gegenstand auf.", "\nEs ist:", Waffe]):-
+	situation(geheimgang),
+	(member(boden, Q);
+		member(gegenstand, Q);
+		member(liegen, Q);
+		member(liegt, Q)
+		),
+	tatwaffe(Waffe).
+
+
+ask(Q, A) :-
+	situation(geheimgang),
+	member(raus, Q),
+	change_situation(schlafzimmer),
+	nl,
+	writeln("Du gehst den Gang weiter entlang und am Ende ist eine Tür. Diese lässt sich von dieser Seite problemlos ohne Schlüssel öffnen."),
+	output(schlafzimmer, A).
+%%%%%%%%%%%%%%%
 
 ask(Q, A) :-
 	person('Beamter', eingangsbereich),
@@ -608,7 +772,14 @@ ask(Q, A) :-
 			);
 		output(no, A)
 		).
-
+%wenn ales nicht in dem Zimmer ist, du aber versuchst ihn anzusprechen
+ask(Q, ["Das Kind ist nicht in diesem Raum, such es erstmal, bevor du es ansprichst."]) :-
+	person('Alex', Location),
+	not(situation(Location)), 
+	(
+		member(kind, Q);
+		member(alex, Q)
+		).
 
 ask(Q, A) :-
 	situation(kind),
@@ -741,13 +912,35 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
+ask(Q, A) :-
+	situation(kind),
+	(member(rat, Q);
+		member(ratschlag, Q)
+		),
+	(moerder(gaertner), output(falscher_rat1, A);
+		output(falscher_rat2,A)).
+
+ask(Q,A):-
+	situation(kind),
+	morsespiele(X),
+	not(X=0),
+	geheimgangGewesen(Y),
+	not(Y>0),
+	(member(folge, Q);
+		member(folgen, Q);
+		member(mitkommen, Q)
+		),
+	change_situation(wohnzimmer),
+	change_person('Alex', wohnzimmer),
+	output(folgen, A).
+
 
 ask(Q, ["Ich", "weiß", "selber,", dass, das, Word, "ist!"]) :-
 	situation(kind),
 	normal(Location),
 	member(Location, Q),
 	person('Du', Location),
-	location(Location, Word).
+	location(Location, Word,_).
 
 
 ask(Q, ["Nein,", das, hier, ist, nicht, Word, "-", das, sieht, man, "doch."]) :-
@@ -755,7 +948,7 @@ ask(Q, ["Nein,", das, hier, ist, nicht, Word, "-", das, sieht, man, "doch."]) :-
 	normal(Location),
 	member(Location, Q),
 	not(person('Du', Location)),
-	location(Location, Word).
+	location(Location, Word,_).
 
 ask(Q,["Bitte,", ich, beende, jetzt, das, "Gespräch,", ich, will, lieber, "spielen."]) :-
 	situation(kind),
@@ -829,17 +1022,19 @@ ask(Q,A) :-
 		output(no, A)
 		).
 
-
+%wollen wir hier nciiht auch Situation beamter zulassen? so nach dem motto: was koennen sie ueber das opfer sagen: er sagt dann haalt nur Opfer ist Putzfrau, weis nciht mehr
 ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
 	not(situation(kind)),
 	not(situation(beamter)),
 	member(opfer, Q).
+
 
 ask(Q, []) :- 
 	not(situation(kind)),
 	not(situation(beamter)),
 	member(lageplan, Q),
 	lageplan.
+
 
 ask(Q, []) :- 
 	not(situation(kind)),
@@ -912,13 +1107,24 @@ output(kueche,
 
 output(schlafzimmer, 
 	["Du", betrittst, das, "Schlafzimmer.",
-	"\n\nEs", ist, klar, dass, die, "Mutter", bei, dessen, "Einrichtung", die, "Finger", im, "Spiel", "hatte."]
+	"\n\nEs", ist, klar, dass, die, "Mutter", bei, dessen, "Einrichtung", die, "Finger", im, "Spiel", "hatte.",
+	"\nDas", ganze, "Zimmer", ist, liebevoll, mit, "Dekoartikeln", "geschmückt," ,
+	"\ndie", "Uhr", auf, dem,"Nachttisch", scheint, aber, "überhaupt", nicht, ins, "Bild", zu, "passen.",
+	"\nEin", "Kleiderschrank" , steht, an, der, "Wand", gegenüber, von, der, "Tür.",
+	"\nDie", "Daunendecke", liegt, "säuberlich", gefaltet, auf, dem, "Bett,", 
+	"\nin", der, "Mitte", erkennt, man, "- bei", genauem, "Hinsehen-", eine, leichte, "Wölbung."]
 	).
 
 output(wohnzimmer, 
 	["Du", betrittst, das, "Wohnzimmer.",
-	"\n\nEs", ist, das, "schönste", "Zimmer", des, "Hauses", mit, "Blick", auf, den, "Garten", und, einer, "Sofaecke."]
+	"\n\nEs", ist, das, "schönste", "Zimmer", des, "Hauses, ", mit, einer, "Sofaecke", und , einem, großen, bodentiefen, "Fenster", durch, das, man, einen, "Blick", auf, den, ganzen, "Garten hat.", 
+	"\nEine", riesige, "Bücherwand", ziert, die, "Längsseite.",
+	"\nDas", beeindruckende, prunkvolles, "Gemälde", an, der, "Wand", direkt, "über", dem, "Sofa", zieht, dich, sofort, in, seinen, "Bann."]
 	).
+%Gemaelde ist Eingang zu Geheimgang
+%wenn morsen not true, dann "Das Bild sieht irgendwie so aus als wuerde es ein Geheimnis verbrgen, aber ich kann es nciht erkennen"
+%nach morsen: morsen true: "Wusste ich doch, dass hier etwas hintersteckt, aber mit dem Eigang zum Geheimgang hatte ich nciht gerechnet."
+%willst du in geheimgang gehen?
 
 output(eingangsbereich, 
 	["Du", betrittst, den, "Eingangsbereich.", 
@@ -933,6 +1139,12 @@ output(eingangsbereich_beamter,
 	"\n\nEr", steht, neben, einer, "Kommode,", auf, der, die, ganzen, "Schlüssel", der, "Familie", sowie, die, neueste, "Post", zu, liegen, "scheint.",
 	"\nIn", der, "Garderobe", finden, sich, auf, den, ersten, "Blick", nur, einige, "Jacken", und, "Schuhe,", die, viele, "Schlammspuren", hinterlassen, "haben.",
 	"\n\nDas", "Licht", an, der, "Decke", flackert, "nervös."]
+	).
+
+output(geheimgang,
+	["Du bist in einem Gang, da du kaum etwas sehen kannst, machst du erstmal deine Taschenlampe an.",
+	"\nLangsam leuchtest du mit dem Lichtkegel den Gang ab, hier gibt es kaum was.",
+	"\nDu läufst weiter, da entdeckst du etwas vor dir auf dem Boden."]
 	).
 
 output(taeter_info, 
@@ -985,6 +1197,17 @@ output(no_hilfe,
 	["Ich", habe, gerade, keine, "Lust", dir, zu, "helfen."]
 	).
 
+output(falscher_rat1,
+	["Ich gebe dir keinen Rat, aber lass uns lieber etwas singen.",
+	"\nDie Putzfrau ist tot, die Putzfrau ist tot, sie kann nicht mehr Putzen tralala, tralala, sie kann nicht mehr putzen tralala tralala."]
+	).
+
+output(falscher_rat2,
+	["Ich gebe dir keinen Rat, aber lass uns lieber etwas singen.",
+	"\nDer Mörder war wieder der Gärtner und er plant schon den nächsten Coup.",
+	"\nDer Mörder ist immer der Gärtner und er schlägt erbarmungslos zu."]
+	).
+
 output(no_bitte, 
 	["Ohne", "Bitte", geht, hier, "garnichts -" , "Deine", "Eltern", haben, bei, der, "Erziehung", ja, mal, voll, "versagt."]
 	).
@@ -998,7 +1221,7 @@ output(nothing,
 	).
 
 output(solved, 
-	["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","Beende", das, "Programm", mit, "'bye'."]
+	["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","\nBeende", das, "Programm", mit, "'bye'."]
 	).
 
 output(wrong_suspicion, ["Dieser", "Verdacht", ist, leider, "falsch,", versuche, es, "später", "nochmal!", "Du", hast, noch, Anzahl, "Verdächtigungsversuche", "übrig."]) :-
@@ -1009,4 +1232,16 @@ output(beamter_stay,
 	["Okay,", was, wollen, sie, "wissen?"]
 	).
 
+output(geheimunbekannt,
+	["Irgendwas ist an dem Gebälde merkwürdig, aber du kannst nicht herausfinden was."]
+	).
+
+output(geheimbekannt,
+	["Hinter dem Gebälde versteckt sich der versteckte Eingang zum Geheimgang."]
+	).
+
+
+output(folgen,
+	["Du folgst Alex ins Wohnzimmer, dort geht er zielstrebig zu dem Gemälde über dem Sofa. \nEr drück einen Knopf im Rahmen, der aussieht wie ein Zierstein, das Bild klappt zur Seite und legt den Eingang zu einem Geheimgang frei. \n'Geh rein, das wird dir bei dem Fall helfen, außer du gruselst dich zu arg.'"]
+	).
 

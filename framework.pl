@@ -62,4 +62,7 @@ greeting :-
 	nl,
 	writeln("Das Licht an der Decke flackert nervös."),
 	nl,
+	writeln("Denk dran, in diesen Fall sind verschiedene Personen verstrickt, nicht jeder hat die gleichen Infos."),
+	writeln("Es kann also sein, dass eine Person eine Frage nicht beantworten kann, aber eine andere Person die Frage beantworten kann."),
+	writeln("Manchmal ist es auch besser man ist in keinem Gespräch, um sich z.B. in Ruhe umzuschauen."),
 	nl.
