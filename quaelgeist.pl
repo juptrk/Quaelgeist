@@ -556,7 +556,7 @@ ask(Q, A) :-
 	morsespiele(X),
 	not(X=0),
 	geheimgangGewesen(Y),
-	not(Y>0),
+	((not(Y>0),
 	nl,
 	writeln("Willst du wirklich in den Geheimgang gehen?"),
 	nl,
@@ -570,8 +570,8 @@ ask(Q, A) :-
 			randomize_child
 			);
 		output(no, A)
-		).
-	%writeln("Du entscheidest dich dazu nicht nochmal in den Geheimgang zu gehen.")).
+		));
+	output(geheimgewesen, A)).
 
 
 %%%%%%%%%%
@@ -1245,3 +1245,6 @@ output(folgen,
 	["Du folgst Alex ins Wohnzimmer, dort geht er zielstrebig zu dem Gemälde über dem Sofa. \nEr drück einen Knopf im Rahmen, der aussieht wie ein Zierstein, das Bild klappt zur Seite und legt den Eingang zu einem Geheimgang frei. \n'Geh rein, das wird dir bei dem Fall helfen, außer du gruselst dich zu arg.'"]
 	).
 
+output(geheimgewesen,
+	["Du entscheidest dich dazu nicht nochmal in den Geheimgang zu gehen."]
+	).
