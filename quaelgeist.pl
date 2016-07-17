@@ -472,8 +472,8 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			change_situation(küche),
-			add_location(küche),
+			change_situation(kueche),
+			add_location(kueche),
 			randomize_child,
 			gerichtsmediziner(kueche, A)
 
@@ -1072,12 +1072,6 @@ ask(Q, A) :-
 		).
 
 
-ask(Q, A) :-
-	(
-		situation(eingangsbereich);
-		situation(eingangsbereich_beamter)
-		),
-	member(kommode, Q),
 	
 
 output(garten,
