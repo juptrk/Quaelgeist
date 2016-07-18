@@ -44,6 +44,7 @@ check_code(Input,Code,Schritt, A, T) :- (listen_vergleich(Input,Code),
 
 %gibt dem Nutzer Infos und startet das Spiel
 mastermind(A, T) :- code(Code),
+			nl,
 			writeln("Ich habe mir einen Code ausgedacht, er besteht aus 3 Zahlen (1-5)."),
 			writeln("Jede Zahl darf nur einmal vorkommen."),
 			writeln("Du errätst meinen 3-stelligen Code nie. Gib einfach nur 3 unterschiedliche Zahlen ein und schreibe keinen Satz. Was ist deine Idee?"),

@@ -47,7 +47,7 @@ add_location(NewLocation) :-
 :- dynamic person/2.
 
 person('Du', eingangsbereich).
-person('Alex', eingangsbereich).
+person('Alex', wohnzimmer).
 person('Beamter', eingangsbereich).
 
 change_person(Person,NewLocation) :-
@@ -312,7 +312,7 @@ random_answer(kind, Head) :-
 		[Head|_]).
 
 
-gerichtsmediziner(Loc,A) :-
+gerichtsmediziner(Out, Loc, A) :-
 	(
 		was_there(eingangsbereich),
 		was_there(garten),
@@ -320,11 +320,11 @@ gerichtsmediziner(Loc,A) :-
 		was_there(arbeitszimmer),
 		was_there(wohnzimmer),
 		was_there(schlafzimmer),
-		gerichtsmediziner_output(Loc, A)
+		gerichtsmediziner_output(Out, Loc, A)
 		);
-	output(Loc, A).
+	output(Out, A).
 
-gerichtsmediziner_output(Loc, A) :-
+gerichtsmediziner_output(Out, Loc, A) :-
 	location(Loc, _),
 	tatort(Tatort),
 	tatort_tipp(Tatort, Tipp),
@@ -341,7 +341,7 @@ gerichtsmediziner_output(Loc, A) :-
 	nl,
 	writeln("Du legst auf und überlegst kurz, was dieser Hinweis bedeuten kann."),
 	writeln("Dann setzt du deine Suche fort."),
-	output(Loc, A).
+	output(Out, A).
 
 
 
@@ -354,8 +354,12 @@ tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Leben
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
 
 
-beamten_gesprochen :-
-	
+beamten_gesprochen(A) :-
+	situation(eingangsbereich),
+	person('Du', eingangsbereich),
+	person('Beamter', eingangsbereich),
+	output(beamten_vergessen, A).
+
 
 
 % Situation: normal
@@ -419,15 +423,17 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			change_situation(garten),
-			add_location(garten),
-			randomize_child,
 			(
+				change_situation(garten),
+				add_location(garten),
+				randomize_child,
 				(
-					person('Alex', garten),
-					output(garten_kind, A)
-					);
-				output(garten, A)
+					(
+						person('Alex', garten),
+						gerichtsmediziner(garten_kind, garten, A)
+						);
+					gerichtsmediziner(garten, garten, A)
+					)
 				)
 			);
 		output(no, A)
@@ -447,7 +453,13 @@ ask(Q, A) :-
 			change_situation(arbeitszimmer),
 			add_location(arbeitszimmer),
 			randomize_child,
-			gerichtsmediziner(arbeitszimmer, A)
+			(
+				(
+					person('Alex', arbeitszimmer),
+					gerichtsmediziner(arbeitszimmer_kind, arbeitszimmer, A)
+					);
+				gerichtsmediziner(arbeitszimmer, arbeitszimmer, A)
+				)
 			);
 		output(no, A)
 		).
@@ -466,8 +478,13 @@ ask(Q, A) :-
 			change_situation(kueche),
 			add_location(kueche),
 			randomize_child,
-			gerichtsmediziner(kueche, A)
-
+			(
+				(
+					person('Alex', kueche),
+					gerichtsmediziner(kueche_kind, kueche, A)
+					);
+				gerichtsmediziner(kueche, kueche, A)
+				)
 			);
 		output(no, A)
 		).
@@ -486,7 +503,13 @@ ask(Q, A) :-
 			change_situation(schlafzimmer),
 			add_location(schlafzimmer),
 			randomize_child,
-			gerichtsmediziner(schlafzimmer, A)
+			(
+				(
+					person('Alex', schlafzimmer),
+					gerichtsmediziner(schlafzimmer_kind, schlafzimmer, A)
+					);
+				gerichtsmediziner(schlafzimmer, schlafzimmer, A)
+				)
 			);
 		output(no, A)
 		).
@@ -505,7 +528,13 @@ ask(Q, A) :-
 			change_situation(wohnzimmer),
 			add_location(wohnzimmer),
 			randomize_child,
-			gerichtsmediziner(wohnzimmer, A)
+			(
+				(
+					person('Alex', wohnzimmer),
+					gerichtsmediziner(wohnzimmer_kind, wohnzimmer, A)
+					);
+				gerichtsmediziner(wohnzimmer, wohnzimmer, A)
+				)
 			);
 		output(no, A)
 		).
@@ -528,7 +557,13 @@ ask(Q, A) :-
 					person('Beamter', eingangsbereich),
 					gerichtsmediziner(eingangsbereich_beamter, A)
 					);
-				gerichtsmediziner(eingangsbereich, A)
+				(
+					(
+						person('Alex', eingangsbereich),
+						gerichtsmediziner(eingangsbereich_kind, eingangsbereich, A)
+						);
+					gerichtsmediziner(eingangsbereich, eingangsbereich, A)
+					)
 				),
 			change_situation(eingangsbereich),
 			randomize_child
@@ -696,8 +731,6 @@ ask(Q, A) :-
 		(
 			member(ja, Input),
 			output(beamter, A),
-			retract(person('Beamter', _)
-				),
 			change_situation(beamter)
 			);
 		output(no, A)
@@ -1086,13 +1119,126 @@ ask(Q, A) :-
 	member(kommode, Q),
 	output(kommode, A).
 
-output(kommode,
-	["Du betrachtest die Kommode näher.",
-	"\n\nInsgesamt 3 Schlüsselbunde liegen dort - allerdings sind sie schwer zuzuordnen, da an keinem Schlüsselanhänger hängen.",
-	"\nDie Post ist da schon informativer - drei der Briefe sind an die Mutter adressiert und scheinen von der Steuerbehörde zu kommen.",
-	"\nZudem liegt dort noch eine Postkarte für die Mutter aus Miami, deren Inhalt zwar etwas verschlüsselt erscheint, eindeutig aber anzüglicher Natur ist.",
-	"\nDer Absender nennt seinen Namen nicht - theoretisch könnte es auch der Vater sein, aber wer weiß?",
-	"\n\nDer Rest der Post ist lediglich Werbung."]).	
+ask(Q, A) :-
+	(
+		situation(eingangsbereich);
+		situation(eingangsbereich_beamter)
+		),
+	(
+		member(garderobe, Q);
+		member(jacken, Q);
+		member(schuhe, Q)
+		),
+	output(garderobe, A).
+
+
+ask(Q, A) :-
+	situation(garten),
+	member(hecke, Q),
+	output(hecke, A).
+
+ask(Q, A) :-
+	situation(garten),
+	(
+		member(blumenbeet, Q);
+		member(beet, Q)
+		),
+	output(blumenbeet, A).
+
+ask(Q, A) :-
+	situation(garten),
+	(
+		member(apfelbaum, Q);
+		member(baum, Q)
+		),
+	output(apfelbaum, A).
+
+ask(Q, A) :-
+	situation(garten),
+	(
+		member(sitzecke, Q);
+		member(holzbank, Q);
+		member(holzbänke, Q);
+		member(grillschale, Q)
+		),
+	output(sitzecke, A).
+
+
+ask(Q, A) :-
+	situation(arbeitszimmer),
+	(
+		member(schreibtisch, Q);
+		member(tisch, Q);
+		member(stuhl, Q);
+		member(schreibtischstuhl, Q);
+		member(mülleimer, Q)
+		),
+	output(schreibtisch, A).
+
+ask(Q, A) :-
+	situation(arbeitszimmer),
+	(
+		member(schrank, Q);
+		member(schrankwand, Q);
+		member(ordner, Q);
+		member(dvds, Q);
+		member(dvd, Q)
+		),
+	output(schrankwand, A).
+
+ask(Q, A) :-
+	situation(arbeitszimmer),
+	member(aktenvernichter, Q),
+	output(aktenvernichter, A).
+
+ask(Q, A) :-
+	situation(arbeitszimmer),
+	(
+		member(bilder, Q);
+		member(kalender, Q);
+		member(wand, Q)
+		),
+	output(bilderkalender, A).
+
+ask(Q, A) :-
+	situation(arbeitszimmer),
+	(
+		member(scheibe, Q);
+		member(darts, Q);
+		member(dart, Q);
+		member(dartscheibe, Q);
+		member(bild, Q)
+		),
+	output(dartscheibe, A).
+
+
+ask(Q, A) :-
+	situation(kueche),
+	(	
+		member(kühlschrank, Q);
+		member(schrank, Q);
+		member(schrankwand, Q);
+		member(küchenschrank, Q)
+		),
+	output(kuechenschrank, A).
+
+ask(Q, A) :-
+	situation(kueche),
+	(	
+		member(essensreste, Q);
+		member(reste, Q);
+		member(essen, Q)
+		),
+	output(essensreste, A).
+
+ask(Q, A) :-
+	situation(kueche),
+	(	
+		member(herd, Q);
+		member(kuechenzeile, Q);
+		member(arbeitsfläche, Q)
+		),
+	output(kuechenzeile, A).
 
 
 output(garten,
@@ -1114,14 +1260,78 @@ output(garten_kind,
 	"\n\nDas Kind rennt wie ein Verrückter um den Baum herum."]
 	).
 
+output(hecke,
+	["Du machst ein paar Schritte in Richtung der Hecke, merkst aber schnell, dass es dort keine Informationen zu holen gibt."]
+	).
+
+output(blumenbeet,
+	["Du gehst zum Blumenbeet und lässt deinen Blick darüber wandern.",
+	"\n\nDir fällt auf, dass der Gärtner in letzter Zeit sehr viele Rosen gepflanzt hatte.",
+	"\nMöglicherweise hatte das einen bestimmten Hintergrund, wie etwa eine neue Liebe?"]
+	).
+
+output(apfelbaum,
+	["Du gehst zum Apfelbaum und bemerkst sofort die Schnitzerei im Baum.",
+	"\nOffensichtlich ist hier ein Herz mit dem Namen der Putzfrau und dem eines Mannes eingraviert.",
+	"\nDer männliche Name wurde allerdings zu Teilen entfernt und ist nichtmehr klar zu erkennen."]
+	).
+
+output(sitzecke,
+	["Du gehst zur Sitzecke und nimmst sie genau unter die Lupe.",
+	"\n\nDie Holzbänke verbergen keine Informationen, doch in der Asche in der Grillschale liegen einige verbrannte Briefe.",
+	"\nDu liest dir die Briefe durch, zumindest das was davon übrig geblieben ist.",
+	"\n\nEs handelt sich um Liebesbriefe, doch am Ende scheint es Streit gegeben zu haben.",
+	"\nEin Absender oder Empfänger lässt sich aber nicht entdecken."]
+	).
+
 output(arbeitszimmer, 
 	["Du betrittst das Arbeitszimmer.", 
 	"\n\nEs ist offensichtlich dass dies das Reich des Vaters ist.",
-	"\nDas  Zimmer ist spärlich eingerichtet - lediglich eine Schrankwand voll mit Ordnern und DVDs und"
+	"\nDas  Zimmer ist spärlich eingerichtet - lediglich eine Schrankwand voll mit Ordnern und DVDs und",
 	"\nein Schreibtisch sowie ein Stuhl finden sich hier.",
 	"\n\nEin Aktenvernichter, der neben dem Schreibtisch steht, muss vor kurzem umgekippt sein, denn überall im Zimmer finden sich kleine Papierschnipsel.",
 	"\n\nAn der Wand hängt neben einigen Bildern und einem Kalender auch eine Dartscheibe, in der noch einige Darts stecken.",
 	"\nDie Dartscheibe scheint mit einem Foto geschmückt zu sein, auf das offensichtlich mehrfach gezielt wurde."]
+	).
+
+output(arbeitszimmer_kind, 
+	["Du betrittst das Arbeitszimmer.", 
+	"\n\nEs ist offensichtlich dass dies das Reich des Vaters ist.",
+	"\nDas  Zimmer ist spärlich eingerichtet - lediglich eine Schrankwand voll mit Ordnern und DVDs und",
+	"\nein Schreibtisch sowie ein Stuhl finden sich hier.",
+	"\n\nEin Aktenvernichter, der neben dem Schreibtisch steht, muss vor kurzem umgekippt sein, denn überall im Zimmer finden sich kleine Papierschnipsel.",
+	"\n\nAn der Wand hängt neben einigen Bildern und einem Kalender auch eine Dartscheibe, in der noch einige Darts stecken.",
+	"\nDie Dartscheibe scheint mit einem Foto geschmückt zu sein, auf das offensichtlich mehrfach gezielt wurde.",
+	"\n\nDas Kind steht in der Mitte des Raumes und wirft Papierkügelchen in den Mülleimer neben dem Schreibtisch."]
+	).
+
+output(schrankwand,
+	["Du gehst zur Schrankwand und schaust, ob du dort etwas Interessantes findest.",
+	"\n\nDie DVDs sind uninteressant - doch in einem der Ordner steht, dass der Lohn der Putzfrau im letzten Monat drastisch gekürzt wurde.",
+	"\nMöglicherweise kam es dadurch zum Streit?"]
+	).
+
+output(schreibtisch,
+	["Du begutachtest den Schreibtisch und seine Umgebung.",
+	"\n\nDer Computer ist aus und mit einem Passwort geschützt - allerdings darfst du auf ihn eh nicht zugreifen ohne Gerichtsbeschluss.",
+	"\nDer Rest des Schreibtisches ist sehr ordentlich und liefert auch keine weiteren Informationen."]
+	).
+
+output(aktenvernichter,
+	["Der Aktenvernichter wurde scheinbar aus Versehen über den Boden ausgeleert.",
+	"\nDa die Akten geschreddert wurden finden sich hier auch keine Informationen."]
+	).
+
+output(bilderkalender,
+	["Die Bilder an der Wand sind lediglich Standard-Fotografien.",
+	"\n\nDer Kalender jedoch ist interessant.",
+	"\nScheinbar ist der Vater erst vor wenigen Tagen von einer Berufsreise aus Miami zurückgekommen.",
+	"\n\nAußerdem ist heute ein Besuch mit dem Titel 'Alternative' notiert worden."]
+	).
+
+output(dartscheibe,
+	["Du gehst zur Dartscheibe und erkennst beim näherkommen die Person auf dem Bild.",
+	"\nEs scheint wohl der Nachbar zu sein, dessen Bild an der Dartscheibe hängt."]
 	).
 
 output(kueche, 
@@ -1130,6 +1340,34 @@ output(kueche,
 	"\nEin Fenster zum Garten sorgt für viel Licht und einen schönen Ausblick auf den Garten.",
 	"\n\nDie letzte Person, die hier gekocht hat, scheint nicht sehr ordentlich gewesen zu sein,",
 	"\nden überall liegen noch Reste der Mahlzeit herum."]).
+
+output(kueche_kind, 
+	["Du betrittst die Küche.",
+	"\n\nDer Raum ist beinahe quadratisch mit einer großen Küchenzeile auf der gegenüberliegenden und einer Schrankwand mit Kühlschrank auf der linken Seite.",
+	"\nEin Fenster zum Garten sorgt für viel Licht und einen schönen Ausblick auf den Garten.",
+	"\n\nDie letzte Person, die hier gekocht hat, scheint nicht sehr ordentlich gewesen zu sein,",
+	"\nden überall liegen noch Reste der Mahlzeit herum.",
+	"\n\nDas Kind steht am Fenster und schaut in den Garten."]).
+
+output(kuechenzeile,
+	["Du betrachtest Herd, Waschbecken und Arbeitsfläche näher.",
+	"\n\nAuch hier finden sich überall Essensreste, scheinbar irgendetwas mit Tomaten.",
+	"\nAnsonsten finden sich hier allerdings keine Hinweise auf die zu untersuchenden Geschehnisse."]
+	).
+
+output(kuechenschrank,
+	["Du untersuchst die Schrankwand und den Kühlschrank.",
+	"\n\nIn den Schränken stehen lediglich Teller, sonstiges Geschirr und Gewürze.",
+	"\n\nIm Kühlschrank aber findest du etwas interessantes:",
+	"\nEin Teil des Essens ist mit einer nachricht versehen worden, adressiert an die Putzfrau.",
+	"\nDarin beschwert sich die Hausherrin darüber, dass die Putzfrau zu viel Platz im Kühlschrank verbraucht.",
+	"\nDies erscheint jedoch nicht wie ein Mordmotiv - oder?"]
+	).
+
+output(essensreste,
+	["Scheinbar handelt es sich bei den Essensresten größtenteils um Tomatensoße, mehr ist hier nicht zu erkennen."]
+	).
+
 
 output(schlafzimmer, 
 	["Du betrittst das Schlafzimmer.",
@@ -1141,22 +1379,50 @@ output(schlafzimmer,
 	"\nin der Mitte erkennt man - bei genauem Hinsehen - eine leichte Wölbung."]
 	).
 
+output(schlafzimmer_kind, 
+	["Du betrittst das Schlafzimmer.",
+	"\n\nEs ist klar dass die Mutter bei dessen Einrichtung die Finger im Spiel hatte.",
+	"\nDas ganze Zimmer ist liebevoll mit Dekoartikeln  geschmückt," ,
+	"\ndie Uhr auf dem Nachttisch scheint aber überhaupt nicht ins Bild zu passen.",
+	"\nEin Kleiderschrank steht an der Wand gegenüber von der Tür.",
+	"\nDie Daunendecke liegt säuberlich gefaltet auf dem Bett,", 
+	"\nin der Mitte erkennt man - bei genauem Hinsehen - eine leichte Wölbung.",
+	"\n\nDas Kind sitz auf dem Bett und stupst immer wieder leicht in die Wölbung."]
+	).
+
+
+%Gemaelde ist Eingang zu Geheimgang
+%wenn morsen not true, dann "Das Bild sieht irgendwie so aus als wuerde es ein Geheimnis verbrgen, aber ich kann es nciht erkennen"
+%nach morsen: morsen true: "Wusste ich doch, dass hier etwas hintersteckt, aber mit dem Eigang zum Geheimgang hatte ich nciht gerechnet."
+%willst du in geheimgang gehen?
 output(wohnzimmer, 
 	["Du betrittst das Wohnzimmer.",
 	"\n\nEs ist das schönste Zimmer des Hauses, mit einer Sofaecke und einem großen bodentiefen Fenster, durch das man einen Blick auf den ganzen Garten hat.", 
 	"\nEine riesige Bücherwand ziert die Längsseite.",
 	"\nDas beeindruckende, prunkvolle Gemälde an der Wand direkt über dem Sofa zieht dich sofort in seinen Bann."]
 	).
-%Gemaelde ist Eingang zu Geheimgang
-%wenn morsen not true, dann "Das Bild sieht irgendwie so aus als wuerde es ein Geheimnis verbrgen, aber ich kann es nciht erkennen"
-%nach morsen: morsen true: "Wusste ich doch, dass hier etwas hintersteckt, aber mit dem Eigang zum Geheimgang hatte ich nciht gerechnet."
-%willst du in geheimgang gehen?
+
+output(wohnzimmer_kind, 
+	["Du betrittst das Wohnzimmer.",
+	"\n\nEs ist das schönste Zimmer des Hauses, mit einer Sofaecke und einem großen bodentiefen Fenster, durch das man einen Blick auf den ganzen Garten hat.", 
+	"\nEine riesige Bücherwand ziert die Längsseite.",
+	"\nDas beeindruckende, prunkvolle Gemälde an der Wand direkt über dem Sofa zieht dich sofort in seinen Bann.",
+	"\n\nDas Kind steht vor dem Sofa und starrt auf das Gemälde."]
+	).
 
 output(eingangsbereich, 
 	["Du betrittst den Eingangsbereich.", 
 	"\n\nDas einzige Möbelstück hier ist eine Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint.",
 	"\nIn der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe, die viele Schlammspuren hinterlassen haben.",
 	"\n\nDas Licht an der Decke flackert nervös."]
+	).
+
+output(eingangsbereich_kind, 
+	["Du betrittst den Eingangsbereich.", 
+	"\n\nDas einzige Möbelstück hier ist eine Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint.",
+	"\nIn der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe, die viele Schlammspuren hinterlassen haben.",
+	"\n\nDas Licht an der Decke flackert nervös.",
+	"\n\nDas Kind steht in der Mitte des des Eingangsbereiches und schaut nach oben zum Deckenlicht."]
 	).
 
 output(eingangsbereich_beamter, 
@@ -1166,6 +1432,23 @@ output(eingangsbereich_beamter,
 	"\nIn der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe, die viele Schlammspuren hinterlassen haben.",
 	"\n\nDas Licht an der Decke flackert nervös."]
 	).
+
+output(kommode,
+	["Du betrachtest die Kommode näher.",
+	"\n\nInsgesamt 3 Schlüsselbunde liegen dort - allerdings sind sie schwer zuzuordnen, da an keinem Schlüsselanhänger hängen.",
+	"\nDie Post ist da schon informativer - drei der Briefe sind an die Mutter adressiert und scheinen von der Steuerbehörde zu kommen.",
+	"\nZudem liegt dort noch eine Postkarte für die Mutter aus Miami, deren Inhalt zwar etwas verschlüsselt erscheint, eindeutig aber anzüglicher Natur ist.",
+	"\nDer Absender nennt seinen Namen nicht - theoretisch könnte es auch der Vater sein, aber wer weiß?",
+	"\n\nDer Rest der Post ist lediglich Werbung."]).
+
+output(garderobe,
+	["Du trittst näher an die Garderobe heran und durchsuchst Schuhe und Jacken.",
+	"\n\nDie Schuhe helfen nicht weiter, sie sind lediglich dreckig.",
+	"\nIn einer der Jacken jedoch findest du einen an den Vater addressierten Zettel.",
+	"\nDarin beschwert sich ein Nachbar über die Putzfrau, weil diese den Abfall scheinbar oftmals bei ihm",
+	"\nin den Garten wirft, um nicht bis zu den Mülltonnen gehen zu müssen."]
+	).
+
 
 output(geheimgang,
 	["Du bist in einem Gang, da du kaum etwas sehen kannst, machst du erstmal deine Taschenlampe an.",
@@ -1273,4 +1556,9 @@ output(folgen,
 
 output(geheimgewesen,
 	["Du entscheidest dich dazu nicht nochmal in den Geheimgang zu gehen."]
+	).
+
+output(beamten_vergessen, 
+	["Sicher dass du bereits alle Informationen des Beamten im Eingangsbereich erhalten hast?",
+	"\n\nBleiben wir doch erstmal noch ein bisschen hier."]
 	).

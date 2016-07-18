@@ -35,11 +35,13 @@ evaluate(Spieler, A, T) :- 	figure(Spieler), computer_choice(Computer), result(S
 
 
 %neuer Versuch wird gestartet
-scheresteinpapier(A, T) :- writeln("Einen Hinweis bekommst du nur, wenn du beim Schere-Stein-Papier gewinnst."),
-		writeln("Such eins aus: Stein, Papier oder Schere."),
-		read_sentence([Spieler|_Tail]), 
-		((member(Spieler,[schere, stein, papier]),evaluate(Spieler, A, T));
-			scheresteinpapier(A,T)).
+scheresteinpapier(A, T) :- 
+	nl,
+	writeln("Einen Hinweis bekommst du nur, wenn du beim Schere-Stein-Papier gewinnst."),
+	writeln("Such eins aus: Stein, Papier oder Schere."),
+	read_sentence([Spieler|_Tail]), 
+	((member(Spieler,[schere, stein, papier]),evaluate(Spieler, A, T));
+		scheresteinpapier(A,T)).
 		
 
 output_scheresteinpapier(eltern, ["Ich hätte", nie, "gedacht,", dass, ich, mal, so, "persönlich", und, "familiär", in, einen, "Mord", verwickelt, sein, "würde."]).%einer der Eltern war es

@@ -8,8 +8,48 @@
 quaelgeist :- greeting(), read_sentence(Input), quaelgeist(Input),!.
 quaelgeist([quälgeist, beenden]) :-
 	nl,
+	writeln("Wollen Sie das Spiel wirklich beenden?"),
 	nl,
-	writeln("Danke, dass du 'Quälgeist' gespielt hast! Hoffentlich bis bald...").
+	read_sentence(Input),
+	(
+		(
+			member(ja, Input),
+			nl,
+			nl,
+			writeln("Danke, dass du 'Quälgeist' gespielt hast! Hoffentlich bis bald...")
+			);
+		(
+			nl,
+			reply(["Okay, dann setzten Sie das Spiel fort."]),
+			nl,
+			nl,
+			read_sentence(NewInput),
+			quaelgeist(NewInput)
+			)
+		).
+
+quaelgeist([quälgeist]) :-
+	nl,
+	writeln("Wollen Sie das Spiel wirklich beenden?"),
+	nl,
+	read_sentence(Input),
+	(
+		(
+			member(ja, Input),
+			nl,
+			nl,
+			writeln("Danke, dass du 'Quälgeist' gespielt hast! Hoffentlich bis bald...")
+			);
+		(
+			nl,
+			reply(["Okay, dann setzten Sie das Spiel fort."]),
+			nl,
+			nl,
+			read_sentence(NewInput),
+			quaelgeist(NewInput)
+			)
+		).
+
 quaelgeist(Input) :-
   	match(Input,Output), % match ist der interessante Teil!
   	nl,
