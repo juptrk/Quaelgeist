@@ -41,7 +41,7 @@ headsep=10mm, footskip=12mm}
 \item Zusammenfassung:\\
 Erweiterung/ Abwandlung vom Brettspiel Cluedo.\\
 Kind (Quälgeist) hat Mord an der Putzfrau beobachtet und Du als Ermittler musst den Mord aufklären.\\
-Kind hat Hinweise, will diesen aber nicht teilen. Um Hinweis zu bekommen muss man Aufgaben erledigen, die das Kind (der Quälgeist) einem stellt. Das Kind ist sehr launisch und entscheidet sich oft um, nun doch nicht zu helfen oder gibt falsche Tipps.\\
+Kind hat Hinweise, will diesen aber nicht teilen. Um Hinweis zu bekommen muss man Aufgaben erledigen, die das Kind (der Quälgeist) einem stellt. Das Kind ist sehr launisch und es gibt Situtionen, wo es sich umentscheidet, doch nicht zu helfen oder gibt falsche Tipps.\\
 Wenn Du eine Vermutung hast, dann kannst Du diese äußern. 
 Wenn Du aber dreimal eine falsche Verdächtigung gemacht hast, dann verlierst Du deinen Job und auch das Spiel.\\
 \ \\
@@ -85,17 +85,34 @@ Mögliche Tatwaffen:
 \subsection*{Zielsetzung}
 Bei unserem Nutzertest hat uns interessiert, welche Eingaben der Nutzer tätigt (die wir nicht bedacht haben) und ob er unseren Aufbau mit den verschiedenen Situationen in denen nicht immer alle Fragen gehen verstanden hat. 
 \subsection*{Aufgabenstellung}
-Wir haben dem Nutzer jetzt keine feste Aufgabe (z.B. 'gehe ins Arbeitszimmer und sehe dich dort um') gegeben, da wir schauen wollten, ob dem Nutzer alle Möglichkeiten klar sind. Die Aufgabenstellung war lediglich: 'Spiele einfach!'. 
+Wir haben dem Nutzer jetzt keine feste Aufgabe (z.B. 'gehe ins Arbeitszimmer und sehe dich dort um') gegeben, da wir schauen wollten, ob dem Nutzer alle Möglichkeiten klar sind. Die Aufgabenstellung war lediglich: 'Spiele einfach!'. \\
+
 \subsection*{Auswertung}
 Aufgetretene Probleme (nach Schwere sortiert, dabei ist das oberste das Schwerstwiegendste):
 \begin{itemize}
-\item
+\item Manche Eingaben haben nicht gematched, da wir sie nicht bedacht hatten. Wir haben diejenigen, die für den Fall sinnvoll sind gematched (alle anderen werden weiterhin random auf eine unserer zufälligen Antworten gematched, da man nicht alle möglichen Fragen abfangen kann)
 \item
 \end{itemize}
 
-\section*{Ausblick}
+\newpage
+\section*{Abschlusskommentar}
+Mit dem Ergebnis sind wir sehr zufrieden. Der Spieler kann verschiedene Hinweise sammeln, sich um Gebäude umschauen, mit verschiedenen Personen interagieren, bekommt Tipps erst, wenn er bestimmte Aufgaben (Minispiele) erledigt hat oder wenn er in allen Räumen war. Wir denken dadurch bietet das Spiel viel Variabilität und es wird nicht langweilig oder ist zu schnell aufgeklärt. Außerdem kann man das Spiel mehrmals spielen.\\
+\\
+Besonders viel Wert haben wir darauf gelegt, dass die Eingabe möglichst flexibel ist. Eine Eingabe wird mit Enter bestätigt und Satzzeichen wie ?,.! werden ignoriert. Außerdem matchen wir in den meisten Fällen auf Schlüsselwörter und nicht auf ganze vorgefertigte Sätze, um dem Nutzer mehr Eingabemöglichkeiten zu bieten. \\
+\\
+Als Alleinstellungsmerkmal hatten wir uns zu Projektbeginn die flexible Eingabe (Eingabe mit Enter, matchen auf Schlüsselwörter), randomisierte Ausgaben bei nicht passenden Eingaben und Minispiele im Hauptspiel überlegt. Alles drei wurde umgesetzt. \\
+Allerdings ist ein weiteres Alleinstellungsmerkmal hinzugekommen: Random Mord!\\
+Wenn man das Spiel startet wird zufällig ein neues Mordszenario erstellt und entsprechend werden die Hinweise ausgegeben. Außerdem haben wir auch bei den Minispielen auf Variabilität geachtet, so gibt es bei 'Mastermind' keinen festen Code, auch dieser wird Random erstellt, und bei 'Morsen' keinen festen Satz, sondern vier verschiedene, wovon einer zufällig generiert wird. So kann der Spieler das gesamte Spiel mehrmals durchspielen ohne schon alles im Vorhinein zu wissen/ lösen zu können.\\
+Auf die Variabilität des Szenarios und die passenden Hinweise haben wir zum Ende des Projekt besonderen Wert gelegt.\\
+\\
+Die während des Nutzertests aufgetretenen Probleme, ob sie umgesetzt wurden und Grunde falls nicht, sind unter dem Punkt 'Nutzertest' weiter oben in der Dokumentation zu finden.\\
+Wir haben beide zu gleichen Teilen an diesem Projekt gearbeitet. Wir haben uns oft zusammengesetzt und gemeinsam programmiert.\\
+
+\subsection*{Ausblick}
+Hier noch ein Ausblick, welche Aspekte man noch verbessern/ erweitern könnte:
 \begin{itemize}
 \item Kindliche Sprache besser ausnutzen (mehr Witze), wir haben das nicht umgesetzt, da dies keine programmiertechnische Herausforderung ist und daher keine hohe Priorität bekommen hat
+\item Weitere Eingaben matchen, bzw. noch mehr random Ausgaben generieren.
 \item zu Beginn wird ein Schriftzug eingeblendet, "Quaelgeist", könnte man noch ohne ae sondern mit ä machen, sieht dann aber nicht mehr ganz so schön aus, daher haben wir uns dagegen entschieden
 \end{itemize}
 \end{document}

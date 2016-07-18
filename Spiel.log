@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.4.20)  17 JUL 2016 20:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.4.20)  18 JUL 2016 09:04
 entering extended mode
 **./Spiel.tex
 (Spiel.tex
@@ -670,8 +670,32 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 80.
 [1
 
-{C:/Users/Leona/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2]
-(Spiel.aux) ) 
+{C:/Users/Leona/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
+
+ []
+
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 99--110
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 99--110
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 99--110
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 99--110
+
+ []
+
+[3] (Spiel.aux) ) 
 Here is how much of TeX's memory you used:
  5172 strings out of 493634
  71811 string characters out of 3135239
@@ -679,20 +703,20 @@ Here is how much of TeX's memory you used:
  8426 multiletter control sequences out of 15000+200000
  53995 words of font info for 60 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 37i,10n,39p,275b,473s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/
-lm/lm-ec.enc}{C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/
-lm/lm-mathsy.enc}<C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
-public/lm/lmbx10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
-pe1/public/lm/lmbx12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/font
-s/type1/public/lm/lmr10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/f
-onts/type1/public/lm/lmr12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.
-9/fonts/type1/public/lm/lmr17.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX
- 2.9/fonts/type1/public/lm/lmro10.pfb><C:/Users/Leona/AppData/Local/Programs/Mi
-KTeX 2.9/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Spiel.pdf (2 pages, 144496 bytes).
+ 37i,10n,39p,523b,473s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dv
+ips/lm/lm-ec.enc}{C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dv
+ips/lm/lm-mathsy.enc}<C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
+pe1/public/lm/lmbx10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/font
+s/type1/public/lm/lmbx12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/
+fonts/type1/public/lm/lmr10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2
+.9/fonts/type1/public/lm/lmr12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTe
+X 2.9/fonts/type1/public/lm/lmr17.pfb><C:/Users/Leona/AppData/Local/Programs/Mi
+KTeX 2.9/fonts/type1/public/lm/lmro10.pfb><C:/Users/Leona/AppData/Local/Program
+s/MiKTeX 2.9/fonts/type1/public/lm/lmsy10.pfb>
+Output written on Spiel.pdf (3 pages, 148823 bytes).
 PDF statistics:
- 39 PDF objects out of 1000 (max. 8388607)
+ 42 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
