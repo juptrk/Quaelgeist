@@ -1,4 +1,3 @@
-%:- include('read.pl').
 :- encoding(iso_latin_1).
 
 morsealphabet :- 
@@ -32,7 +31,7 @@ morsealphabet :-
 				nl.
 
 % dann muss man Kind folgen, dieses führt einen in Geheimgang, dort ligt Tatwaffe
-
+%Grammatik generiert Sätze, die in Morsezeichen übersetzt werden
 bef --> befehl1.
 bef --> befehl2.
 befehl1 --> verbpro, pro. %verb und pronomen
@@ -46,7 +45,6 @@ verbprae --> k,o,m,m,e.
 
 pro --> m,i,r.
 prae --> m,i,t.
-
 
 a   -->   [".-"].
 b   -->   ["-..."].
@@ -75,13 +73,13 @@ x   -->   ["-..-"].
 y   -->   ["-.--"].
 z   -->   ["--.."].
 				
-
+%jedem möglichen Satz (Befehl), wird eine Nummer zugewiesen, damit man später vergleichen kann mit den 
 welcherBefehl(B,Nummer) :- 
 				((B=["..-.", "---", ".-..", "--.", ".", "--", "..", ".-."], Nummer is 1);
 				(B=["-.-", "---", "--", "--", ".", "--", "..", "-"], Nummer is 2);
 				(B=["-.-", "---", "--", "--", ".", "--", "..", "-", "--", "..", ".-."], Nummer is 3);
 				(B=["-.-", "---", "--", "--", ".", "--", "..", "-", "--", "..", ".-.", "--", "..", "-"], Nummer is 4)). %B ist der Befehl
-	
+%vergleicht, ob Nutzereingaabe dem durch Morsezeichen verschlüsselten Satz entspricht
 check_morse_uebersetzung(Input,Nummer,A):- 
 								(Nummer = 1, Input = [folge, mir], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
 								(Nummer = 2, Input = [komme, mit], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
@@ -89,6 +87,7 @@ check_morse_uebersetzung(Input,Nummer,A):-
 								(Nummer = 4, Input = [komme, mit, mir, mit], writeln("Super, du hast den Satz richtig übersetzt."), output_morsen(A));
 								(writeln("Leider falsch übersetzt. Versuch es nocheinmal."), morsen1(Nummer,A)).
 
+%alle Befehle (setof) werden zufällig durchmischt (permutiert) und dann wird einer (erster) ausgewählt
 morsen(A) :-  setof(X,bef(X,[]),Befehlliste), random_permutation(Befehlliste,[B|_Restpermut]), welcherBefehl(B,Nummer),
 			nl,
 			writeln("Ich morse dir den nächsten Hinweis, du muss ihn nurnoch übersetzen."),

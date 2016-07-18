@@ -148,6 +148,13 @@ ort(arbeitszimmer).
 
 alle_orte(Orte) :- setof(O, ort(O), Orte).
 
+waffe1(pistole, 'eine Pistole').
+waffe1(messer, 'ein Messer').
+waffe1(seil, 'ein Seil').
+waffe1(spaten, 'ein Spaten').
+waffe1(gift, 'ein Fläschchen mit Gift').
+waffe1(pokal, 'einen Pokal').
+
 waffe(pistole).
 waffe(messer).
 waffe(seil).
@@ -173,21 +180,21 @@ angestellte(koch).
 
 alle_taeter(Taeter) :- setof(T, taeter(T), Taeter).
 
-%Mord 
-tatort(arbeitszimmer).
-tatwaffe(seil).
-moerder(nachbar).
+%Mord (explizite Eingabe)
+%tatort(arbeitszimmer).
+%tatwaffe(seil).
+%moerder(nachbar).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%wenn wir es randomisieren wollen, allerdings scheint das sehr schwierig, weil man dasn die Hinweise anpassen müsste etc.
-%tatort(Tatort) :- alle_orte(Orte), random_permutation(Orte,[Tatort|_Rest]).
-%tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|_Rest]).
-%moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
+%randomisierter Mord
+tatort(Tatort) :- alle_orte(Orte), random_permutation(Orte,[Tatort|_Rest]).
+tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|_Rest]).
+moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
 
 %um Mord auszugeben
-%mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
-%		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
+mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
+		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
 
 lageplan :- nl,
 			writeln("                LAGEPLAN             "),
@@ -369,6 +376,9 @@ match([hallo], ["Hallo."]) :-
 	situation(kind).
 
 match([wo, ist, alex], [Ort]) :-
+	person('Alex', Ort).
+
+match([wo, ist, das, kind], [Ort]) :-
 	person('Alex', Ort).
 
 match(Input, Output) :-
@@ -633,14 +643,15 @@ ask(Q, A) :-
 
 %%%%%%%%%%%%%%Geheimgang
 
-ask(Q,["Du gehst näher heran, bückst dich und hebst einen blutverschmierten Gegenstand auf.", "\nEs ist:", Waffe]):-
+ask(Q,["Du gehst näher heran, bückst dich und hebst einen blutverschmierten Gegenstand auf.", "\nEs ist:", Wort]):-
 	situation(geheimgang),
 	(member(boden, Q);
 		member(gegenstand, Q);
 		member(liegen, Q);
 		member(liegt, Q)
 		),
-	tatwaffe(Waffe).
+	tatwaffe(Waffe),
+	waffe1(Waffe,Wort).
 
 
 ask(Q, A) :-
@@ -1050,7 +1061,6 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
-
 ask(Q, A) :-
 	(
 		situation(eingangsbereich);
@@ -1066,6 +1076,7 @@ output(kommode,
 	"\nZudem liegt dort noch eine Postkarte für die Mutter aus Miami, deren Inhalt zwar etwas verschlüsselt erscheint, eindeutig aber anzüglicher Natur ist.",
 	"\nDer Absender nennt seinen Namen nicht - theoretisch könnte es auch der Vater sein, aber wer weiß?",
 	"\n\nDer Rest der Post ist lediglich Werbung."]).	
+
 
 output(garten,
 	["Du", gehst, in, den, "Garten.",

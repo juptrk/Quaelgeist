@@ -65,4 +65,7 @@ greeting :-
 	writeln("Denk dran, in diesen Fall sind verschiedene Personen verstrickt, nicht jeder hat die gleichen Infos."),
 	writeln("Es kann also sein, dass eine Person eine Frage nicht beantworten kann, aber eine andere Person die Frage beantworten kann."),
 	writeln("Manchmal ist es auch besser man ist in keinem Gespräch, um sich z.B. in Ruhe umzuschauen."),
+	nl, 
+	writeln("Du kannst jederzeit eine Verdächtigung abgeben, insgesamt hast du 3 Versuche um auf die richtige Lösung des Falls zu kommen."),
+	writeln("Verdächtigungen werden im neutralen Rahmen getätigt, also wenn du gerade nicht in einem Gespräch mit einer Person bist."),
 	nl.

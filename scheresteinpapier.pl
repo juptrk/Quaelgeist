@@ -1,8 +1,6 @@
 :- encoding(iso_latin_1).
 
 % (statische) Wissensbasis
-
-
 %diese Begiffe koennen gewaehlt werden
 figure(stein).
 figure(papier).
