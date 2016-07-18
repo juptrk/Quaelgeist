@@ -33,8 +33,12 @@ was_there(eingangsbereich).
 
 add_location(NewLocation) :-
 	ort(NewLocation),
-	not(was_there(NewLocation)),
-	assertz(was_there(NewLocation)).
+	(
+		was_there(NewLocation)
+		);
+	(
+		assertz(was_there(NewLocation))
+		).
 	
 
 
@@ -50,6 +54,7 @@ change_person(Person,NewLocation) :-
 	person(Person,OldLocation),
 	retract(person(Person,OldLocation)),
 	assertz(person(Person,NewLocation)).
+
 
 %dynamisches Prädikat: 
 :- retractall(verdaechtigungszahl(_)).
@@ -74,50 +79,15 @@ set_verdaechtigung :-
 		).
 
 
-%dynamisches Praedikat: 
-:- retractall(geheimgangGewesen(_)).
-:- dynamic geheimgangGewesen/1.
 
-geheimgangGewesen(0).
+:- retractall(vorbei(_)).
+:- dynamic vorbei/1.
 
-set_geheimgangGewesen :-
-	geheimgangGewesen(AlteAnzahl),
-	retract(geheimgangGewesen(AlteAnzahl)),
-	NeueAnzahl is AlteAnzahl+1, 
-	assertz(geheimgangGewesen(NeueAnzahl)).
+als_vorbei_markieren(Situation) :-
+	not(vorbei(Situation)),
+	assertz(vorbei(Situation)).
 
 
-:- retractall(mastermindspiele(_)).
-:- dynamic mastermindspiele/1.
-
-mastermindspiele(0).
-
-set_mastermind :-
-	retract(mastermindspiele(AlteAnzahl)),
-	NeueAnzahl is AlteAnzahl+1, 
-	assertz(mastermindspiele(NeueAnzahl)).
-
-
-:- retractall(scheresteinpapierspiele(_)).
-:- dynamic scheresteinpapierspiele/1.
-
-scheresteinpapierspiele(0).
-
-set_scheresteinpapier :-
-	retract(scheresteinpapierspiele(AlteAnzahl)),
-	NeueAnzahl is AlteAnzahl+1, 
-	assertz(scheresteinpapierspiele(NeueAnzahl)).
-
-
-:- retractall(morsespiele(_)).
-:- dynamic morsespiele/1.
-
-morsespiele(0).
-
-set_morsespiele :-
-	retract(morsespiele(AlteAnzahl)),
-	NeueAnzahl is AlteAnzahl+1, 
-	assertz(morsespiele(NeueAnzahl)).
 
 :- retractall(alter_antwort(_)).
 :- dynamic alter_antwort/1.
@@ -128,6 +98,8 @@ alter_antwort(["8"]).
 :- dynamic name_antwort/1.
 
 name_antwort(["Ich", "heiße", "Alex"]).
+
+
 
 :- retractall(location_counter(_)).
 :- dynamic location_counter/1.
@@ -157,22 +129,14 @@ randomize_child :-
 
 %Wissensbasis
 
-%location(eingangsbereich, 'der Eingangsbereich').
-%location(schlafzimmer, 'das Schlafzimmer').
-%location(küche, 'die Küche').
-%location(garten, 'der Garten').
-%location(wohnzimmer, 'das Wohnzimmer').
-%location(arbeitszimmer, 'das Arbeitszimmer').
-%location(geheimgang, 'der Geheimgang').
-
-location(eingangsbereich, 'der Eingangsbereich', 'den Eingangsbereich').
-location(eingangsbereich_beamter, 'der Eingangsbereich', 'den Eingangsbereich').
-location(schlafzimmer, 'das Schlafzimmer', 'das Schlafzimmer').
-location(kueche, 'die Küche', 'die Küche').
-location(garten, 'der Garten', 'den Garten').
-location(wohnzimmer, 'das Wohnzimmer', 'das Wohnzimmer').
-location(arbeitszimmer, 'das Arbeitszimmer', 'das Arbeitszimmer').
-location(geheimgang, 'der Geheimgang', 'den Geheimgang').
+location(eingangsbereich, 'der Eingangsbereich').
+location(eingangsbereich_beamter, 'der Eingangsbereich').
+location(schlafzimmer, 'das Schlafzimmer').
+location(kueche, 'die Küche').
+location(garten, 'der Garten').
+location(wohnzimmer, 'das Wohnzimmer').
+location(arbeitszimmer, 'das Arbeitszimmer').
+location(geheimgang, 'der Geheimgang').
 
 
 ort(eingangsbereich).
@@ -304,7 +268,7 @@ verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A) :-
 	writeln("Wo wurde die Putzfrau ermordet?"),
 	read_sentence([Ortverdacht|_Tail]), 
 	(
-		location(Ortverdacht, _, _),
+		location(Ortverdacht, _),
 		verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A)
 		);
 	(
@@ -354,7 +318,7 @@ gerichtsmediziner(Loc,A) :-
 	output(Loc, A).
 
 gerichtsmediziner_output(Loc, A) :-
-	location(Loc, _, _),
+	location(Loc, _),
 	tatort(Tatort),
 	tatort_tipp(Tatort, Tipp),
 	nl,
@@ -550,29 +514,34 @@ ask(Q, A) :-
 ask(Q, A) :-
 	not(situation(kind)),
 	not(situation(beamter)),
-	(member(geheimgang, Q);
+	(
+		member(geheimgang, Q);
 		member(geheim, Q);
 		member(gang, Q)
 		),
-	morsespiele(X),
-	not(X=0),
-	geheimgangGewesen(Y),
-	((not(Y>0),
-	nl,
-	writeln("Willst du wirklich in den Geheimgang gehen?"),
-	nl,
-	read_sentence(Input),
+	vorbei(morse),
 	(
 		(
-			member(ja, Input),
-			output(geheimgang, A),
-			change_situation(geheimgang),
-			set_geheimgangGewesen,
-			randomize_child
+			vorbei(geheimgang),
+			output(geheimgewesen, A)
 			);
-		output(no, A)
-		));
-	output(geheimgewesen, A)).
+		(
+			nl,
+			writeln("Willst du wirklich in den Geheimgang gehen?"),
+			nl,
+			read_sentence(Input),
+			(
+				(
+					member(ja, Input),
+					output(geheimgang, A),
+					change_situation(geheimgang),
+					als_vorbei_markieren(geheimgang),
+					randomize_child
+					);
+				output(no, A)
+				)
+			)
+		).
 
 
 %%%%%%%%%%
@@ -653,9 +622,13 @@ ask(Q, A) :-
 		),
 	writeln("Auf dem Bild sind 2 Reiter auf Pferden zu sehen."),
 	nl,
-	morsespiele(X),
-	(X=0, output(geheimunbekannt, A);
-		output(geheimbekannt, A)).
+	(
+		(
+			vorbei(morse),
+			output(geheimbekannt, A)
+			);
+		output(geheimunbekannt, A)
+		).
 
 
 %%%%%%%%%%%%%%Geheimgang
@@ -800,19 +773,18 @@ ask(Q, A) :-
 				),
 			(
 				(
-					scheresteinpapierspiele(X),
-					X = 0,
-					(
-						(
-							moerder(T),
-							eltern(T),
-							scheresteinpapier(A,eltern)
-							);
-						scheresteinpapier(A,sonstige)
-						),
-					set_scheresteinpapier
+					vorbei(scheresteinpapier),
+					output(no_hinweis, A)
 					);
-				output(no_hinweis, A)
+				(
+					(
+						moerder(T),
+						eltern(T),
+						scheresteinpapier(A,eltern)
+						);
+					scheresteinpapier(A,sonstige)
+					),
+				als_vorbei_markieren(scheresteinpapier)
 				)
 			);
 		(
@@ -844,19 +816,18 @@ ask(Q, A) :-
 				),
 			(
 				(
-					mastermindspiele(X),
-					X = 0,
-					(
-						(
-							moerder(T),
-							angestellte(T),
-							mastermind(A, angestellter)
-							);
-						mastermind(A, sonstige)
-						),
-					set_mastermind
+					vorbei(mastermind),
+					output(no_tipp, A)
 					);
-				output(no_tipp, A)
+				(
+					(
+						moerder(T),
+						angestellte(T),
+						mastermind(A, angestellter)
+						);
+					mastermind(A, sonstige)
+					),
+				als_vorbei_markieren(mastermind)
 				)
 			);
 		(
@@ -894,12 +865,13 @@ ask(Q, A) :-
 				),
 			(
 				(
-					morsespiele(X),
-					X = 0,
-					morsen(A),
-					set_morsespiele
+					vorbei(morse),
+					output(no_hilfe, A)
 					);
-				output(no_hilfe, A)
+				(
+					morsen(A),
+					als_vorbei_markieren(morse)
+					)
 				)
 			);
 		(
@@ -923,17 +895,23 @@ ask(Q, A) :-
 
 ask(Q,A):-
 	situation(kind),
-	morsespiele(X),
-	not(X=0),
-	geheimgangGewesen(Y),
-	not(Y>0),
-	(member(folge, Q);
-		member(folgen, Q);
-		member(mitkommen, Q)
-		),
-	change_situation(wohnzimmer),
-	change_person('Alex', wohnzimmer),
-	output(folgen, A).
+	vorbei(morse),
+	(
+		(
+			vorbei(geheimgang),
+			output(geheimgewesen, A)
+			);
+		(
+			(
+				member(folge, Q);
+				member(folgen, Q);
+				member(mitkommen, Q)
+				),
+			change_situation(wohnzimmer),
+			change_person('Alex', wohnzimmer),
+			output(folgen, A)
+			)
+		).
 
 
 ask(Q, ["Ich", "weiß", "selber,", dass, das, Word, "ist!"]) :-
@@ -941,7 +919,7 @@ ask(Q, ["Ich", "weiß", "selber,", dass, das, Word, "ist!"]) :-
 	normal(Location),
 	member(Location, Q),
 	person('Du', Location),
-	location(Location, Word,_).
+	location(Location, Word).
 
 
 ask(Q, ["Nein,", das, hier, ist, nicht, Word, "-", das, sieht, man, "doch."]) :-
@@ -949,7 +927,7 @@ ask(Q, ["Nein,", das, hier, ist, nicht, Word, "-", das, sieht, man, "doch."]) :-
 	normal(Location),
 	member(Location, Q),
 	not(person('Du', Location)),
-	location(Location, Word,_).
+	location(Location, Word).
 
 ask(Q,["Bitte,", ich, beende, jetzt, das, "Gespräch,", ich, will, lieber, "spielen."]) :-
 	situation(kind),
@@ -1080,7 +1058,14 @@ ask(Q, A) :-
 		),
 	member(kommode, Q),
 	output(kommode, A).
-	
+
+output(kommode,
+	["Du betrachtest die Kommode näher.",
+	"\n\nInsgesamt 3 Schlüsselbunde liegen dort - allerdings sind sie schwer zuzuordnen, da an keinem Schlüsselanhänger hängen.",
+	"\nDie Post ist da schon informativer - drei der Briefe sind an die Mutter adressiert und scheinen von der Steuerbehörde zu kommen.",
+	"\nZudem liegt dort noch eine Postkarte für die Mutter aus Miami, deren Inhalt zwar etwas verschlüsselt erscheint, eindeutig aber anzüglicher Natur ist.",
+	"\nDer Absender nennt seinen Namen nicht - theoretisch könnte es auch der Vater sein, aber wer weiß?",
+	"\n\nDer Rest der Post ist lediglich Werbung."]).	
 
 output(garten,
 	["Du", gehst, in, den, "Garten.",
