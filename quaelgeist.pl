@@ -74,7 +74,7 @@ set_verdaechtigung :-
 			NeueAnzahl>=3,
 			writeln("Du hast zu viele falsche Verdächtigungen gemacht, du darfst keine mehr äußern."),
 			writeln("Leider hast du den Fall nicht gelöst und wirst gefeuert."),
-			writeln("Das Spiel ist nun beendet - schließe es mit 'bye' und starte es neu für einen weiteren Versuch.")
+			writeln("Das Spiel ist nun beendet - schließe es mit 'Quälgeist beenden' und starte es neu für einen weiteren Versuch.")
 			)
 		).
 
@@ -301,7 +301,7 @@ random_answer(Situation, Head) :-
 	random_permutation([
 		["Ich", denke, nicht, dass, wir, jetzt, darüber, reden, "sollten."],
 		["Bitte", denke, nocheinmal, über, deinen, nächsten, "Schritt", "nach."],
-		["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, "'bye'", "eingeben."]],
+		["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, "'Quälgeist beenden'", "eingeben."]],
 		[Head|_]).
 
 random_answer(kind, Head) :- 
@@ -354,11 +354,21 @@ tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Leben
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
 
 
+beamten_gesprochen :-
+	
+
+
 % Situation: normal
 
 normal(X) :- 
 	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
 
+
+match([wo, bin, ich], ["Dein aktueller Aufenthaltsort ist", Ort]) :-
+	situation(X),
+	normal(X),
+	person('Du', Loc),
+	location(Loc, Ort).
 
 match([wie, geht, es, dir],["Was für eine langweilige Frage von dir."]) :- 
 	situation(kind).
@@ -391,16 +401,16 @@ match(_, Answer) :-
 
 
 ask(Q, ["Dort", bist, du, doch, "bereits!"]) :- 
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	normal(Location),
 	member(Location, Q),
 	person('Du', Location).
 
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(garten, Q),
 	nl,
 	writeln("Willst du wirklich in den Garten gehen?"),
@@ -412,14 +422,20 @@ ask(Q, A) :-
 			change_situation(garten),
 			add_location(garten),
 			randomize_child,
-			output(garten, A)
+			(
+				(
+					person('Alex', garten),
+					output(garten_kind, A)
+					);
+				output(garten, A)
+				)
 			);
 		output(no, A)
 		).
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(arbeitszimmer, Q),
 	nl,
 	writeln("Willst du wirklich in das Arbeitszimmer gehen?"),
@@ -437,8 +453,8 @@ ask(Q, A) :-
 		).
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(küche, Q),
 	nl,
 	writeln("Willst du wirklich in die Küche gehen?"),
@@ -457,8 +473,8 @@ ask(Q, A) :-
 		).
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(schlafzimmer, Q),
 	nl,
 	writeln("Willst du wirklich in das Schlafzimmer gehen?"),
@@ -476,8 +492,8 @@ ask(Q, A) :-
 		).
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(wohnzimmer, Q),
 	nl,
 	writeln("Willst du wirklich in das Wohnzimmer gehen?"),
@@ -496,8 +512,8 @@ ask(Q, A) :-
 
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	(member(eingangsbereich, Q);
 		member(eingang, Q)),
 	nl,
@@ -522,8 +538,8 @@ ask(Q, A) :-
 
 
 ask(Q, A) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	(
 		member(geheimgang, Q);
 		member(geheim, Q);
@@ -709,7 +725,8 @@ ask(Q, A) :-
 			member(tatverdächtiger, Q)
 			),
 		output(taeter_info, A)
-		).
+		),
+	retract(person('Beamter', _)).
 
 ask(Q, A) :-
 	situation(beamter),
@@ -1014,21 +1031,21 @@ ask(Q,A) :-
 
 %wollen wir hier nciiht auch Situation beamter zulassen? so nach dem motto: was koennen sie ueber das opfer sagen: er sagt dann haalt nur Opfer ist Putzfrau, weis nciht mehr
 ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(opfer, Q).
 
 
 ask(Q, []) :- 
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	member(lageplan, Q),
 	lageplan.
 
 
 ask(Q, []) :- 
-	not(situation(kind)),
-	not(situation(beamter)),
+	situation(X),
+	normal(X),
 	(
 		member(tatorte, Q);
 		member(räume, Q)
@@ -1079,45 +1096,56 @@ output(kommode,
 
 
 output(garten,
-	["Du", gehst, in, den, "Garten.",
-	"\n\nEr", ist, "wunderschön", und, man, "sieht,", dass, diese, "Familie", einen, "Gärtner", haben, "muss.",
-	"\nEine", rechteckig, gestutzte, "Hecke", "schützt", das, "Innere", vor, neugierigen, "Blicken.",
-	"\nAußerdem", gibt, es, ein, "großes,", buntes, "Blumenbeet", und, einen, riesigen, "Apfelbaum.",
-	"\n\nDas", "Highlight", des, "Gartens", ist, aber, klar, die, "große", "Sitzecke", mit, "Holzbänken", und, einer, "Grillschale,",
-	"\nin", der, es, scheinbar, vor, "Kurzem", noch, gebrannt, "hatte."]
+	["Du gehst in den Garten.",
+	"\n\nEr ist wunderschön und man sieht, dass diese Familie einen Gärtner haben muss.",
+	"\nEine rechteckig gestutzte Hecke schützt das Innere vor neugierigen Blicken.",
+	"\nAußerdem gibt es ein großes, buntes Blumenbeet und einen riesigen Apfelbaum.",
+	"\n\nDas Highlight des Gartens ist aber klar die große Sitzecke mit Holzbänken und einer Grillschale,",
+	"\nin der es scheinbar vor Kurzem noch gebrannt hatte."]
+	).
+
+output(garten_kind,
+	["Du gehst in den Garten.",
+	"\n\nEr ist wunderschön und man sieht, dass diese Familie einen Gärtner haben muss.",
+	"\nEine rechteckig gestutzte Hecke schützt das Innere vor neugierigen Blicken.",
+	"\nAußerdem gibt es ein großes, buntes Blumenbeet und einen riesigen Apfelbaum.",
+	"\n\nDas Highlight des Gartens ist aber klar die große Sitzecke mit Holzbänken und einer Grillschale,",
+	"\nin der es scheinbar vor Kurzem noch gebrannt hatte.",
+	"\n\nDas Kind rennt wie ein Verrückter um den Baum herum."]
 	).
 
 output(arbeitszimmer, 
-	["Du", betrittst, das, "Arbeitszimmer.", 
-	"\n\nEs", ist, offensichtlich, dass, dies, das, "Reich", des, "Vaters", "ist.",
-	"\nDas", "Zimmer", ist, "spärlich", "eingerichtet -", lediglich, eine, "Schrankwand", voll, mit, "Ordnern", und, "DVDs", und,
-	"\nein", "Schreibtisch", sowie, ein, "Stuhl", finden, sich, "hier.",
-	"\n\nAn", der, "Wand", "hängt", neben, einigen, "Bildern", und, einem, "Kalender", auch, eine, "Dartscheibe,", in, der, noch, einige, "Darts", "stecken.",
-	"\nDie", "Dartscheibe", scheint, mit, einem, "Foto", "geschmückt", zu, "sein,", auf, das, offensichtlich, mehrfach, gezielt, "wurde."]
+	["Du betrittst das Arbeitszimmer.", 
+	"\n\nEs ist offensichtlich dass dies das Reich des Vaters ist.",
+	"\nDas  Zimmer ist spärlich eingerichtet - lediglich eine Schrankwand voll mit Ordnern und DVDs und"
+	"\nein Schreibtisch sowie ein Stuhl finden sich hier.",
+	"\n\nEin Aktenvernichter, der neben dem Schreibtisch steht, muss vor kurzem umgekippt sein, denn überall im Zimmer finden sich kleine Papierschnipsel.",
+	"\n\nAn der Wand hängt neben einigen Bildern und einem Kalender auch eine Dartscheibe, in der noch einige Darts stecken.",
+	"\nDie Dartscheibe scheint mit einem Foto geschmückt zu sein, auf das offensichtlich mehrfach gezielt wurde."]
 	).
 
 output(kueche, 
-	["Du", betrittst, die, "Küche.",
-	"\n\nDer", "Raum", ist, beinahe, quadratisch, mit, einer, "großen", "Küchenzeile", auf, der, "gegenüberliegenden", und, einer, "Schrankwand", mit, "Kühlschrank", auf, der, linken, "Seite.",
-	"\nEin", "Fenster", zum, "Garten", sorgt, "für", viel, "Licht", und, einen, "schönen", "Ausblick", auf, den, "Garten.",
-	"\n\nDie", letzte, "Person,", die, hier, gekocht, "hat,", scheint, nicht, sehr, ordentlich, gewesen, zu, "sein,",
-	"\nden", "überall", liegen, noch, "Reste", der, "Mahlzeit", "herum."]).
+	["Du betrittst die Küche.",
+	"\n\nDer Raum ist beinahe quadratisch mit einer großen Küchenzeile auf der gegenüberliegenden und einer Schrankwand mit Kühlschrank auf der linken Seite.",
+	"\nEin Fenster zum Garten sorgt für viel Licht und einen schönen Ausblick auf den Garten.",
+	"\n\nDie letzte Person, die hier gekocht hat, scheint nicht sehr ordentlich gewesen zu sein,",
+	"\nden überall liegen noch Reste der Mahlzeit herum."]).
 
 output(schlafzimmer, 
-	["Du", betrittst, das, "Schlafzimmer.",
-	"\n\nEs", ist, klar, dass, die, "Mutter", bei, dessen, "Einrichtung", die, "Finger", im, "Spiel", "hatte.",
-	"\nDas", ganze, "Zimmer", ist, liebevoll, mit, "Dekoartikeln", "geschmückt," ,
-	"\ndie", "Uhr", auf, dem,"Nachttisch", scheint, aber, "überhaupt", nicht, ins, "Bild", zu, "passen.",
-	"\nEin", "Kleiderschrank" , steht, an, der, "Wand", gegenüber, von, der, "Tür.",
-	"\nDie", "Daunendecke", liegt, "säuberlich", gefaltet, auf, dem, "Bett,", 
-	"\nin", der, "Mitte", erkennt, man, "- bei", genauem, "Hinsehen-", eine, leichte, "Wölbung."]
+	["Du betrittst das Schlafzimmer.",
+	"\n\nEs ist klar dass die Mutter bei dessen Einrichtung die Finger im Spiel hatte.",
+	"\nDas ganze Zimmer ist liebevoll mit Dekoartikeln  geschmückt," ,
+	"\ndie Uhr auf dem Nachttisch scheint aber überhaupt nicht ins Bild zu passen.",
+	"\nEin Kleiderschrank steht an der Wand gegenüber von der Tür.",
+	"\nDie Daunendecke liegt säuberlich gefaltet auf dem Bett,", 
+	"\nin der Mitte erkennt man - bei genauem Hinsehen - eine leichte Wölbung."]
 	).
 
 output(wohnzimmer, 
-	["Du", betrittst, das, "Wohnzimmer.",
-	"\n\nEs", ist, das, "schönste", "Zimmer", des, "Hauses, ", mit, einer, "Sofaecke", und , einem, "großen", bodentiefen, "Fenster", durch, das, man, einen, "Blick", auf, den, ganzen, "Garten hat.", 
-	"\nEine", riesige, "Bücherwand", ziert, die, "Längsseite.",
-	"\nDas", beeindruckende, prunkvolles, "Gemälde", an, der, "Wand", direkt, "über", dem, "Sofa", zieht, dich, sofort, in, seinen, "Bann."]
+	["Du betrittst das Wohnzimmer.",
+	"\n\nEs ist das schönste Zimmer des Hauses, mit einer Sofaecke und einem großen bodentiefen Fenster, durch das man einen Blick auf den ganzen Garten hat.", 
+	"\nEine riesige Bücherwand ziert die Längsseite.",
+	"\nDas beeindruckende, prunkvolle Gemälde an der Wand direkt über dem Sofa zieht dich sofort in seinen Bann."]
 	).
 %Gemaelde ist Eingang zu Geheimgang
 %wenn morsen not true, dann "Das Bild sieht irgendwie so aus als wuerde es ein Geheimnis verbrgen, aber ich kann es nciht erkennen"
@@ -1125,18 +1153,18 @@ output(wohnzimmer,
 %willst du in geheimgang gehen?
 
 output(eingangsbereich, 
-	["Du", betrittst, den, "Eingangsbereich.", 
-	"\n\nDas", einzige, "Möbelstück", hier, ist, eine, "Kommode,", auf, der, die, ganzen, "Schlüssel", der, "Familie", sowie, die, neueste, "Post", zu, liegen, "scheint.",
-	"\nIn", der, "Garderobe", finden, sich, auf, den, ersten, "Blick", nur, einige, "Jacken", und, "Schuhe,", die, viele, "Schlammspuren", hinterlassen, "haben.",
-	"\n\nDas", "Licht", an, der, "Decke", flackert, "nervös."]
+	["Du betrittst den Eingangsbereich.", 
+	"\n\nDas einzige Möbelstück hier ist eine Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint.",
+	"\nIn der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe, die viele Schlammspuren hinterlassen haben.",
+	"\n\nDas Licht an der Decke flackert nervös."]
 	).
 
 output(eingangsbereich_beamter, 
-	["Du", betrittst, den, "Eingangsbereich.",
-	"\n\nDort", steht, ein, weiterer, "Beamter", und, schreibt, etwas, in, sein, "Notizbuch.", 
-	"\n\nEr", steht, neben, einer, "Kommode,", auf, der, die, ganzen, "Schlüssel", der, "Familie", sowie, die, neueste, "Post", zu, liegen, "scheint.",
-	"\nIn", der, "Garderobe", finden, sich, auf, den, ersten, "Blick", nur, einige, "Jacken", und, "Schuhe,", die, viele, "Schlammspuren", hinterlassen, "haben.",
-	"\n\nDas", "Licht", an, der, "Decke", flackert, "nervös."]
+	["Du betrittst den Eingangsbereich.",
+	"\n\nDort steht ein weiterer Beamter und schreibt etwas in sein Notizbuch.", 
+	"\n\nEr steht neben einer Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint.",
+	"\nIn der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe, die viele Schlammspuren hinterlassen haben.",
+	"\n\nDas Licht an der Decke flackert nervös."]
 	).
 
 output(geheimgang,
@@ -1219,7 +1247,7 @@ output(nothing,
 	).
 
 output(solved, 
-	["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","\nBeende", das, "Programm", mit, "'bye'."]
+	["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","\nBeende", das, "Programm", mit, "'Quälgeist beenden'."]
 	).
 
 output(wrong_suspicion, ["Dieser", "Verdacht", ist, leider, "falsch,", versuche, es, "später", "nochmal!", "Du", hast, noch, Anzahl, "Verdächtigungsversuche", "übrig."]) :-

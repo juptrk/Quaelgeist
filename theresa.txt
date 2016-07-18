@@ -1,0 +1,452 @@
+Nutzertest Theresa
+
+t: Ich suche das Kind
+
+s: Willst du das Kind ansprechen
+
+t: Ja
+
+s: Du gehst zu dem Kind und beginnst ein Gespraech
+
+% Frage: muss ich nett sein?
+
+t: Hallo, was hast du beobachtet?
+
+k: Darauf will ich dir gerade nicht antworten.
+
+t: Was willst du gerne machen
+
+k: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
+
+*lachen*
+
+% Achso wer ist eigentlich nochmal gestorben, die Putzfrau
+
+t: Kanntest du die Putzfrau gut
+
+k: Willst du unser Gespräch etwa schon beenden? Dann sag das doch einfach.
+
+t: Wo sind deine Eltern
+
+k: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
+
+% Okay dann geh ich einfach jetzt wieder
+
+Ich: es geht eigentlich nur darum dass du das Kind nach den richtigen Sachen fragst
+
+t: Wer war im Haus
+
+k: Darauf will ich dir gerade nicht antworten
+
+Ich: Erst Gespräch beenden, dann Raum wechseln!
+
+% Achso Okay
+
+t: Ich will das gespräch beenden
+
+k: Willst du unser Gespräch einfach so beenden?
+
+t: ja
+
+s: du beendest das Gespraech
+
+t: Ich gehe in die Küche
+
+s: Willst du wirklich in die Küche gehen?
+
+t: ja
+
+s: Küchentext
+
+Ich: du kannst auch nach den Räumen fragen
+
+t: Welche Räume gibt es
+
+s: Lageplan
+
+Ich: IM EIngangsbereich warst du vorher
+
+% Ja, Ja
+
+t: Ich gehe ins Schlafzimmer
+
+s: Willst du wirklich in das Schlafzimmer gehen?
+
+t: ja
+
+s: Schlafzimmertext
+
+Ich: Du kannst auch mit bestimmten dingen versuchen zu interagieren
+
+t: Was ist bei der Wölbung
+
+s: Katze
+
+t: Was ist im Kleiderschrank
+
+s: türe
+
+t: ich öffne die Tür
+
+s: scheint verschlossen
+
+t: Ich suche den Schlüssel
+
+s: kein schlüssel
+
+t: Ich gehe ins Wohnzimmer
+
+s: Willst du wirklich ins Wohnzimmer gehen?
+
+t: ja
+
+s: WOhnzimmertext
+
+t: Ich sehe das Gemälde genauer an
+
+s: Auf dem Bild sind zwei Reiter auf Pferde zu sehen (zwe absätze danach)
+Irgendwas ist merkwürdig, aber du kannst nicht herausfinden was
+
+t: Ich gehe in den Garten
+
+s: Willst du wirklich in den Garten gehen?
+
+t: ja
+
+s: Gartentext
+
+t: Ich schaue die Grillschale an
+
+s: Ich denke nicht dass wir jetzt darüber reden sollten
+
+Ich: der Garten ist noch nicht ganz fertig
+
+t: Räume
+
+s: Lageplan
+
+t: Ich gehe ins Arbeitszimmer
+
+s: WIllst du wirklich ins Arbeitszimmer gehen?
+
+t: ja
+
+s: Gerichtsmediziner, dann Arbeitszimmer
+
+t: Ich schaue das Foto an
+
+s: BItte denke nocheinmal über deinen nächsten Schritt nach
+
+Ich: ICh glaube die beiden Räume die fertig implementiert sind hast du jetzt schon, deshalb kannst du dir hier leider noch nicht alles anschauen. Vielleicht versuchst du aber nochmal mit dem Kind zu reden
+
+t: Ich suche das Kind
+
+s: Das Kind ist nicht in diesem Raum, such es erstmal, bevor du es ansprichst
+
+t: Ich gehe in den Eingangsbereich
+
+s: Willst du wirklich in den EIngangsbereich gehen?
+
+t: ja
+
+s: Gerichtsmediziner, dann Eingangsbereich
+
+Ich: Arg ungeschickt, Kind wird nicht angezeigt in Raumbeschreibung
+
+t: Kind ansprechen
+
+s: Das Kind ist nicht in diesem Raum, such es erstmal, bevor du es ansprichst
+
+t: Wohnzimmer
+
+s: WIllst du wirklich ins Wohnzimmer gehen?
+
+t: ja
+
+s: okay dann eben nicht
+
+t: wohnzimmer
+
+s: Dort bist du doch bereits!
+
+t: Ich suche das Kind
+
+s: Das Kind ist nicht in diesem Raum, such erstmal, bevor du es ansprichst
+
+t: schlafzimmer
+
+s: WIllst du wirklich in das Schlafzimmer gehen?
+
+t: ja
+
+s: Okay dann eben nicht
+
+t: schlafzimmer
+
+s: dort bist du doch bereits!
+
+t: Suche das Kind
+
+s: Das kind ist nicht in diesem Raum, suche es erstmal bevor du es ansprichst
+
+t: küche
+
+s: willst du wirklich in die küche gehen?
+
+t: ja
+
+s: okay, dann eben nicht
+
+t: küche
+
+s: willst du wirklich in die küche gehen
+
+t: kind ansprechen
+
+s: okay, dann eben nicht.
+
+t: ich suche das kind
+
+s: willst du das Kind ansprechen?
+
+t: ja
+
+s: Du gehst zu dem Kind und beginnst ein Gespräch
+
+Ich: Du musst das Kind im Grunde nach einem Tipp oder Hinweis fragen, das ist dann eventuell die richtige Frage
+
+t: hast du mir einen Hinweis
+
+s: willst du einen Hinweis von mir?
+
+t: ja
+
+s: Ohne bitte geht hier garnichts - Deine Eltenr haben bei der Erziehung ja mal voll versagt.
+
+t: kannst du mir bitte einen Hinweis geben
+
+s: willst du einen Hinweis von mir?
+
+Ich: jetzt musst du dann eigentlih nochmal bitte sagen
+
+t: ja bitte
+
+s: EInen hinweis bekommst du wenn du gewinnst - scheresteinpapier
+
+t: schere 
+
+s: unentschieden
+
+t: schere
+
+s: gewonnen - eltern waren es nicht
+
+t: wer ist noch im haus
+
+s: willst du inser Gespräch etwa schon beenden? Dann sag das doch einfach.
+
+t: noch ein tipp
+
+s: willst du einen Tipp von mir?
+
+t: ja bitte
+
+s: mastermind
+
+t: 123
+
+s: falsch
+
+% hetzt muss ich aber echt raten
+
+t: 134
+
+s: fast richtig
+
+Ich: oha, das war aber gut
+
+t: 132
+
+s: richtig - kein angestellter!
+
+% Muss ich jetzt die ganze Zeit nach tipps fragen?
+
+Ich: ne - du hast das ganz gut gemacht, dass du zuerst nach hinweis, dann nach tipp gefragt hast - jetzt kannst du noch nach rat oder hilfe fragen
+
+t: hast du einen rat
+
+s: singt
+
+Ich: oh fuck - rat ist ja ein witz :D Ich glaube es ist hilfe...
+
+t: hast du hilfe für mich
+
+s: brauchst du meine Hilfe?
+
+t: ja bitte
+
+% Ist komma ein neuer Buchstabe?
+
+Ich: ja genau
+
+... 
+
+% achso muss ich das jetzt schreiben
+
+t: komme mit
+
+s: richtig, Also dann folge mir mal
+
+t: ich folge
+
+s: folgen text
+
+t: ich geh rein
+
+s: WIllst du das spiel etwa beenden? dann musst du bye sagen
+
+t: ich gehe in den geheimgang
+
+s: willst du wirklich in den Geheimgang gehen?
+
+t: ja
+
+s: beschreibung geheimgang
+
+t: was ist auf dem boden
+
+s: näher ran, es ist seil
+
+t: ich gehe weiter
+
+s: bitte denke nocheinmal über deinen nächsten Schritt nach
+
+t: ich geh raus
+
+s: geheimgang verlassen, schlafzimmer
+
+Ich: jetzt hast du ja schon einige hinweise, mit verdächtigung kannst du verdächtigung abgeben
+
+% Ich kenn doch noch nienamden
+
+Ich: kannst dir auch täter ausgeben lassen
+
+t: täter
+
+s: Möchtest du eine Verdächtigung äußern?
+
+t: nein
+
+s: Okay, dann eben nicht
+
+t: verdächtige
+
+s: Möchtest du eine Verdächtigung äußern?
+
+t: personen
+
+s: okay dann eben nicht
+
+t: personen
+
+s: WIllst du das Spiel beenden? dann musst du bye sagen
+
+t: eingangsbreich
+
+s: bitte denk nochmal über deinen nächste nSchritt nach
+
+t: eingangsbreich
+
+s: Ich denke nicht dass wir jetzt darüber reden sollten
+
+Ich: du hast jetzt zweimal eingangsbreich geschrieben :D 
+
+t: eingangsbereich
+
+s: willst du wirklich in den EIngangsbereich gehen?
+
+t: ja
+
+s: gerichtsmediziner, dann eingangsbereich
+
+Ich: Ups, das sollte nicht passieren...
+
+t: beamten eden
+
+s: willst du den beamten ansprechen?
+
+t: ja
+
+s: du sprichst den beamten an
+
+t: wer sind die verdächtigen
+
+s: das kind ist nicht in diesem Raum, such erstmal, evor du es ansprichst
+
+t: tatverdächtige
+
+s: verdächtige text
+
+% Das wäre vllt am anfang geshcickt dass man das weiß ganz am anfang
+
+Ich: ja stimmt, finde ich auch
+
+% kann ich jetzt gleich verdächtigen
+
+ich: ich glaube erst gespräch beenden
+
+t: gespräch beenden
+
+s: kann ich ihnen sonst noch behilflich sein?
+
+t: nein
+
+s: Du beendest das gespräch
+
+t: verdächtigung
+
+s: Möchstest du eine Verdächtigung äußern?
+
+t: nachbar
+
+s: Okay dann eben nicht.
+
+Ich: du musst erst ja sagen
+
+t: verdächtigung
+
+s: Möchtest du eine Verdächtigung abgeben
+
+t: ja
+
+s: ok dann lass mal hören - mörder?
+
+t: nachbar
+
+s: waffe?
+
+t: seil
+
+s: wo? 
+
+% Was soll ich da jetzt sagen?
+
+Ich: da hast du auch nen hinweis bekommen
+
+%in der Küche?
+
+Ich: nein, vom gerichtsmediziner
+
+t: arbeitszimmer
+
+s: gewonnen!!!
+
+% Wie kommt man eigentlich auf den nachbarn?
+
+Ich: ja ist dann schon bisschen raten
+
+% Ja und man weiß jetzt irgendwie auch nicht warum...
+
+
+Allgemeine Bemerkung: Formattierungen, etc. sollten noch etwas geändert werden...
+

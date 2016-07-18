@@ -6,7 +6,10 @@
 :- encoding(iso_latin_1).
 
 quaelgeist :- greeting(), read_sentence(Input), quaelgeist(Input),!.
-quaelgeist([bye]) :- writeln("Danke, dass du 'Quälgeist' gespielt hast! Hoffentlich bis bald...").
+quaelgeist([quälgeist, beenden]) :-
+	nl,
+	nl,
+	writeln("Danke, dass du 'Quälgeist' gespielt hast! Hoffentlich bis bald...").
 quaelgeist(Input) :-
   	match(Input,Output), % match ist der interessante Teil!
   	nl,
