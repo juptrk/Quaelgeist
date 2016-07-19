@@ -5,6 +5,8 @@
 :- include('read.pl').
 :- encoding(iso_latin_1).
 
+
+
 quaelgeist :- greeting(), read_sentence(Input), quaelgeist(Input),!.
 quaelgeist([quälgeist, beenden]) :-
 	nl,

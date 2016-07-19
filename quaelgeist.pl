@@ -163,6 +163,44 @@ name_antwort(["Ich heiße Alex."]).
 
 
 /*
+dynamische Prädikate tatort/1, tatwaffe/1, moerder/1
+definieren den zu Beginn zufällig erzeugten mord
+*/
+:- retractall(tatort(_)).
+:- dynamic tatort/1.
+
+set_tatort(Tatort) :-
+	(
+		tatort(AlterTatort),
+		retract(tatort(AlterTatort)),
+		assertz(tatort(Tatort))
+		);
+	assertz(tatort(Tatort)).
+
+:- retractall(tatwaffe(_)).
+:- dynamic tatwaffe/1.
+
+set_tatwaffe(Tatwaffe) :-
+	(
+		tatwaffe(AlterTatwaffe),
+		retract(tatwaffe(AlterTatwaffe)),
+		assertz(tatwaffe(Tatwaffe))
+		);
+	assertz(tatwaffe(Tatwaffe)).
+
+
+:- retractall(moerder(_)).
+:- dynamic moerder/1.
+
+set_moerder(Moerder) :-
+	(
+		moerder(AlterMoerder),
+		retract(moerder(AlterMoerder)),
+		assertz(moerder(Moerder))
+		);
+	assertz(moerder(Moerder)).
+
+/*
 dynamisches Prädikat location_counter/1
 Gibt die aktuelle Zahl an besuchten Orten seit dem letzten Reset an.
 */
@@ -313,11 +351,31 @@ normal(X) :-
 %moerder(nachbar).
 
 /*
-Die Prädikate tatort/1, tatwaffe/1 und moerder/1 erstellen zu Beginn einen zufälligen Mord
+random_mord
+erzeugt einen zufälligen Mord
 */
-tatort(Tatort) :- alle_orte(Orte), random_permutation(Orte,[Tatort|_Rest]).
-tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|_Rest]).
-moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
+random_mord :-
+	(
+		vorbei(mord),
+		tatort(Tatort),
+		tatwaffe(Tatwaffe),
+		moerder(Moerder),
+		set_moerder(Moerder),
+		set_tatwaffe(Tatwaffe),
+		set_tatort(Tatort)
+		);
+	(
+		alle_orte(Orte),
+		random_permutation(Orte, [Tatort|_Rest1]),
+		alle_waffen(Waffen), 
+		random_permutation(Waffen, [Tatwaffe|_Rest2]),
+		alle_taeter(Taeter), 
+		random_permutation(Taeter,[Moerder|_Rest3]),
+		als_vorbei_markieren(mord),
+		set_moerder(Moerder),
+		set_tatwaffe(Tatwaffe),
+		set_tatort(Tatort)
+		).
 
 /*
 lageplan/0
@@ -526,7 +584,12 @@ tatort_tipp(eingangsbereich, "Ich wollte Ihnen nur mitteilen, dass wir in der Wu
 tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
 
+
+
 %%%%%%%%%%%% Match Anfragen %%%%%%%%%%%%%%%
+
+match([mord], [A,B,C]) :-
+	tatort(A),tatwaffe(B),moerder(C).
 
 match([wo, bin, ich], ["Dein aktueller Aufenthaltsort ist", Ort]) :-
 	situation(X),
@@ -828,6 +891,7 @@ ask(Q, A) :-
 ask(Q, A) :-
 	person('Beamter', eingangsbereich),
 	situation(eingangsbereich),
+	random_mord,
 	(
 		member(beamter, Q);
 		member(beamten, Q);
@@ -1816,7 +1880,7 @@ output(solved,
 	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'."]
 	).
 
-output(wrong_suspicion, ["Dieser Verdacht ist leider falsch, versuche es später nochmal! Du hast noch Anzahl Verdächtigungsversuche übrig."]) :-
+output(wrong_suspicion, ["Dieser Verdacht ist leider falsch, versuche es später nochmal! Du hast noch", Anzahl, "Verdächtigungsversuche übrig."]) :-
 	verdaechtigungszahl(AlteAnzahl),
 	Anzahl is 2 - AlteAnzahl.
 
@@ -1845,3 +1909,4 @@ output(beamten_vergessen,
 	["Sicher dass du bereits alle Informationen des Beamten im Eingangsbereich erhalten hast?",
 	"\n\nBleiben wir doch erstmal noch ein bisschen hier."]
 	).
+
