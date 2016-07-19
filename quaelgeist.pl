@@ -1,3 +1,4 @@
+%Bindet das Framework und die Minispiele ein
 :- include('framework.pl').
 :- include('scheresteinpapier.pl').
 :- include('mastermindRandom.pl').
@@ -5,32 +6,48 @@
 :- encoding(iso_latin_1).
 
 
-% definiert die aktuelle situation
-% mögliche situationen sind kind, garten, arbeitszimmer, wohnzimmer, schlafzimmer, eingangsbereich, kueche, geheim
+/* definiert die aktuelle Situation
+ mögliche Situationen sind kind, beamter, garten, arbeitszimmer, wohnzimmer, schlafzimmer, eingangsbereich, kueche, geheim
+*/
 :- retractall(situation(_)).
 :- dynamic situation/1.
 
+% Das Spiel beginnt im Eingangsbereich, somit ist dieser die aktuelle Situation
 situation(eingangsbereich).
 
+
+/*
+change_situation/1
+Aktualisiert die aktuelle Situation hin zu der übergebenen und falls es sich nicht um ein Gespräch
+handelt auch die Position des Protagonisten.
+*/
 change_situation(NewSituation) :-
-	NewSituation == kind,
+	(
+		(
+			NewSituation == kind;
+			NewSituation == beamter
+			);
+		change_person('Du', NewSituation)
+		),
 	situation(OldSituation),
 	retract(situation(OldSituation)),
 	assertz(situation(NewSituation)).
 
-change_situation(NewSituation) :-
-	not(NewSituation == kind),
-	change_person('Du', NewSituation),
-	situation(OldSituation),
-	retract(situation(OldSituation)),
-	assertz(situation(NewSituation)).
 
-
+/*
+dynamisches Prädikat was_there/1
+Prädikat gibt an, dass ein Ort bereits besucht wurde, wenn er hier hinzugefügt wurde.
+*/
 :- retractall(was_there(_)).
 :- dynamic was_there/1.
 
+/*Da das Spiel im Eingangsbereich beginnt gilt dieser als bereits besucht*/
 was_there(eingangsbereich).
 
+/*
+add_location/1
+Fügt die übergebenen Location zu den bereits besuchten hinzu insofern sie noch nicht dabei ist
+*/
 add_location(NewLocation) :-
 	ort(NewLocation),
 	(
@@ -42,25 +59,46 @@ add_location(NewLocation) :-
 	
 
 
-% definiert die personen, mit denen man interagieren kann und sich selbst
+/*
+Dynamisches Prädikat person/2
+Definiert alle Personen, mit denen man aktuell interagieren kann + den Protagonisten selbst
+*/
 :- retractall(person(_)).
 :- dynamic person/2.
 
+/*
+Zu Beginn gibt es den Protagonisten, das Kind und den Beamten, deshalb werden diese zu Beginn initialisiert
+*/
 person('Du', eingangsbereich).
 person('Alex', wohnzimmer).
 person('Beamter', eingangsbereich).
 
+/*
+change_person/2
+Verändert den Ort der übergebenen Person zum übergebenen Ort.
+*/
 change_person(Person,NewLocation) :-
 	person(Person,OldLocation),
 	retract(person(Person,OldLocation)),
 	assertz(person(Person,NewLocation)).
 
 
-%dynamisches Prädikat: 
+/*
+dynamisches Prädikat verdachtigungszahl/0
+Beinhaltet die aktuelle Anzahl an Verdächtigungsversuchen
+*/
 :- retractall(verdaechtigungszahl(_)).
 :- dynamic verdaechtigungszahl/1.
+
+
+/* Zu Beginn 0 Versuche */
 verdaechtigungszahl(0).
 
+/*
+set_verdaechtigung/0
+Addiert eins auf die aktuelle Anzahl an Verdächtigungen auf.
+Zudem gibt es eine Nachricht aus, dass man entweder verloren hat oder aber es weiter versuchen soll.
+*/
 set_verdaechtigung :-
 	retract(verdaechtigungszahl(AlteAnzahl)),
 	NeueAnzahl is AlteAnzahl+1, 
@@ -79,44 +117,86 @@ set_verdaechtigung :-
 		).
 
 
-
+/*
+dynamisches Prädikat vorbei/1
+Listet alle Situationen auf, die nur einmal vorkommen sollen und bereits vorgekommen sind
+*/
 :- retractall(vorbei(_)).
 :- dynamic vorbei/1.
 
+/* Zu Beginn keine Situationen bereits erledigt */
+
+/*
+als_vorbei_markieren/1
+Fügt eine Situation zu den erledigten Situationen, d.h. zum dynamischen Prädikat vorbei/1, hinzu
+*/
 als_vorbei_markieren(Situation) :-
-	not(vorbei(Situation)),
-	assertz(vorbei(Situation)).
+	(
+		vorbei(Situation)
+		);
+	(
+		assertz(vorbei(Situation))
+		).
 
 
-
+/*
+dynamisches Prädikat alter_antwort/1
+Diese Antwort soll nur beim ersten Mal tatsächlich beantwortet werden, danach soll etwas anderes geantwortet
+werden.
+Zu Beginn ist also die Antwort das tatsächliche Alter, wenn dieses ausgegeben wird, wird auch das Prädikat verändert.
+*/
 :- retractall(alter_antwort(_)).
 :- dynamic alter_antwort/1.
 
 alter_antwort(["8"]).
 
+/*
+dynamisches Prädikat name_antwort/1
+Diese Antwort soll nur beim ersten Mal tatsächlich beantwortet werden, danach soll etwas anderes geantwortet
+werden.
+Zu Beginn ist also die Antwort der tatsächliche Name, wenn dieser ausgegeben wird, wird auch das Prädikat verändert.
+*/
 :- retractall(name_antwort(_)).
 :- dynamic name_antwort/1.
 
-name_antwort(["Ich", "heiße", "Alex"]).
+name_antwort(["Ich heiße Alex."]).
 
 
-
+/*
+dynamisches Prädikat location_counter/1
+Gibt die aktuelle Zahl an besuchten Orten seit dem letzten Reset an.
+*/
 :- retractall(location_counter(_)).
 :- dynamic location_counter/1.
 
+/* Zu Beginn 0 */
 location_counter(0).
 
+/* 
+reset_counter/0
+Setzt den counter auf 0 zurück
+*/
 reset_counter :-
 	location_counter(Old),
 	retract(location_counter(Old)),
 	assertz(location_counter(0)).
 
+/*
+increase_counter/0
+Erhöht den Counter um 1
+*/
 increase_counter :-
 	location_counter(Old),
 	New is Old+1,
 	retract(location_counter(Old)),
 	assertz(location_counter(New)).
 
+/*
+randomize_child/0
+Überprüft, ob der counter 3 ist, d.h. ob 4 Orte besucht wurden.
+Wenn ja, dann wird die Location des Kindes zufällig geändert und der Counter zurückgesetzt.
+Ansonsten wird er hochgezählt.
+*/
 randomize_child :-
 	(
 		location_counter(3),
@@ -129,16 +209,10 @@ randomize_child :-
 
 %Wissensbasis
 
-location(eingangsbereich, 'der Eingangsbereich').
-location(eingangsbereich_beamter, 'der Eingangsbereich').
-location(schlafzimmer, 'das Schlafzimmer').
-location(kueche, 'die Küche').
-location(garten, 'der Garten').
-location(wohnzimmer, 'das Wohnzimmer').
-location(arbeitszimmer, 'das Arbeitszimmer').
-location(geheimgang, 'der Geheimgang').
-
-
+/*
+ort/1
+Beinhaltet alle möglichen Orte
+*/
 ort(eingangsbereich).
 ort(schlafzimmer).
 ort(kueche).
@@ -146,15 +220,16 @@ ort(garten).
 ort(wohnzimmer).
 ort(arbeitszimmer).
 
+/*
+alle_orte/1
+Packt alle möglichen Orte in eine Liste
+*/
 alle_orte(Orte) :- setof(O, ort(O), Orte).
 
-waffe1(pistole, 'eine Pistole').
-waffe1(messer, 'ein Messer').
-waffe1(seil, 'ein Seil').
-waffe1(spaten, 'ein Spaten').
-waffe1(gift, 'ein Fläschchen mit Gift').
-waffe1(pokal, 'einen Pokal').
-
+/*
+waffe/1
+Beinhaltet alle möglichen Waffen
+*/
 waffe(pistole).
 waffe(messer).
 waffe(seil).
@@ -162,9 +237,16 @@ waffe(spaten).
 waffe(gift).
 waffe(pokal).
 
+/*
+alle_waffen/1
+Packt alle möglichen Waffen in eine Liste
+*/
 alle_waffen(Waffen) :- setof(W, waffe(W), Waffen).
 
-
+/*
+taeter/1
+Beinhaltet alle möglichen Täter
+*/
 taeter(vater).
 taeter(mutter).
 taeter(gaertner).
@@ -172,30 +254,67 @@ taeter(koch).
 taeter(nachbar).
 taeter(besuch).
 
+/*
+alle_taeter/1
+Packt alle möglichen Täter in eine Liste
+*/
+alle_taeter(Taeter) :- setof(T, taeter(T), Taeter).
+
+/*
+eltern/1
+definiert Mutter und Vater zusätzlich als Eltern
+*/
 eltern(vater).
 eltern(mutter).
 
+/*
+angestellte/1
+definiert Gärtner und Koch zusätzlich als Angestellte
+*/
 angestellte(gaertner).
 angestellte(koch).
 
-alle_taeter(Taeter) :- setof(T, taeter(T), Taeter).
+/*
+location/2
+gibt zu allen möglichen Orten eine grammatikalisch passende Ausgabe des Namens zurück
+*/
+location(eingangsbereich, 'der Eingangsbereich').
+location(schlafzimmer, 'das Schlafzimmer').
+location(kueche, 'die Küche').
+location(garten, 'der Garten').
+location(wohnzimmer, 'das Wohnzimmer').
+location(arbeitszimmer, 'das Arbeitszimmer').
+location(geheimgang, 'der Geheimgang').
+
+/*
+waffe1/2
+gibt zu allen möglichen Waffen eine grammatikalisch passende Ausgabe des Namens zurück
+*/
+waffe1(pistole, 'eine Pistole').
+waffe1(messer, 'ein Messer').
+waffe1(seil, 'ein Seil').
+waffe1(spaten, 'ein Spaten').
+waffe1(gift, 'ein Fläschchen mit Gift').
+waffe1(pokal, 'einen Pokal').
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Mord (explizite Eingabe)
 %tatort(arbeitszimmer).
 %tatwaffe(seil).
 %moerder(nachbar).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%randomisierter Mord
+/*
+Die Prädikate tatort/1, tatwaffe/1 und moerder/1 erstellen zu Beginn einen zufälligen Mord
+*/
 tatort(Tatort) :- alle_orte(Orte), random_permutation(Orte,[Tatort|_Rest]).
 tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|_Rest]).
 moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
 
-%um Mord auszugeben
-mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
-		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
-
+/*
+lageplan/0
+Gibt den Lageplan des Hauses aus
+*/
 lageplan :- nl,
 			writeln("                LAGEPLAN             "),
 			writeln("____/ _______________________________"),
@@ -219,6 +338,11 @@ lageplan :- nl,
 			nl.
 
 
+/*
+verdaechtigung/1
+fordert den Spieler auf, einen Mörder einzugeben und ruft dann verdaechtigung2/2 auf.
+Wenn die Eingabe nicht zu den Anforderungen passt wird verdaechtigung1/1 aufgerufen.
+*/
 verdaechtigung(A) :- 
 	writeln("Ok, dann lass mal hören."),
 	writeln("Wer ist deiner Meinung nach der Mörder?"),
@@ -237,6 +361,10 @@ verdaechtigung(A) :-
 			)
 		).
 
+/*
+verdaechtigung1/1
+Ruft sich bei einer unpassenden Eingabe erneut selbst auf, ansonsten wird verdaechtigung2/2 aufgerufen.
+*/
 verdaechtigung1(A) :- 
 	writeln("Wer ist deiner Meinung nach der Mörder?"),
 	read_sentence([Moerderverdacht|_Tail]),
@@ -253,6 +381,10 @@ verdaechtigung1(A) :-
 			)
 		).
 
+/*
+verdaechtigung2/2
+Ruft sich bei einer unpassenden Eingabe erneut selbst auf, ansonsten wird verdaechtigung3/3 aufgerufen.
+*/
 verdaechtigung2(Moerderverdacht, A) :- 
 	writeln("Was war die Tatwaffe?"),
 	read_sentence([Tatwaffeverdacht|_Tail]),
@@ -270,7 +402,10 @@ verdaechtigung2(Moerderverdacht, A) :-
 			)
 		).
 
-
+/*
+verdaechtigung3/3
+Ruft sich bei einer unpassenden Eingabe erneut selbst auf, ansonsten wird verdaechtigungComplete/4 aufgerufen.
+*/
 verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A) :- 
 	writeln("Wo wurde die Putzfrau ermordet?"),
 	read_sentence([Ortverdacht|_Tail]), 
@@ -286,6 +421,10 @@ verdaechtigung3(Moerderverdacht, Tatwaffeverdacht, A) :-
 		verdaechtigung3(Moerderverdacht,Tatwaffeverdacht, A)
 		).
 
+/*
+verdaechtigungComplete/4
+Überprüft ob die Eingabe passt und gibt dann eine passende Antwort.
+*/
 verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A) :- 
 	(
 		moerder(Moerderverdacht),
@@ -295,24 +434,42 @@ verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A) :-
 		);
 	output(wrong_suspicion, A).
 
-
+/*
+random_answer/2
+Gibt je nach Situation zufällig eine von 3 in etwa passenden randomisierten Antworten aus.
+*/
 random_answer(Situation, Head) :- 
 	normal(Situation),
 	random_permutation([
-		["Ich", denke, nicht, dass, wir, jetzt, darüber, reden, "sollten."],
-		["Bitte", denke, nocheinmal, über, deinen, nächsten, "Schritt", "nach."],
-		["Willst", du, das, "Spiel", etwa, "beenden?", "Dann", musst, du, "'Quälgeist beenden'", "eingeben."]],
+		["Ich denke nicht dass wir jetzt darüber reden sollten."],
+		["Bitte denke nocheinmal über deinen nächsten Schritt nach."],
+		["Willst du das Spiel etwa beenden? Dann musst du 'Quälgeist beenden' eingeben."]],
+		[Head|_]).
+
+random_answer(beamter, Head) :- 
+	random_permutation([
+		["Dazu kann ich Ihnen keine Auskunft geben."],
+		["Soweit sind unsere Ermittlungen denke ich noch nicht fortgeschritten."],
+		["Ich bin mir nicht sicher ob ich der Richtige für eine Antwort auf diese Frage bin."]],
 		[Head|_]).
 
 random_answer(kind, Head) :- 
 	random_permutation([
-		["Hey,", du, willst, etwas, von, "mir,", stell, eine, sinnvolle, "Frage!"],
-		["Darauf", will, ich, dir, gerade, nicht, "antworten."],
-		["Willst", du, unser, "Gespräch", etwa, schon, "beenden?", "Dann", sag, das, doch, "einfach."]],
+		["Hey, du willst etwas von mir, stell eine sinnvolle Frage!"],
+		["Darauf will ich dir gerade nicht antworten."],
+		["Willst du unser Gespräch etwa schon beenden? Dann sag das doch einfach."]],
 		[Head|_]).
 
-
+/*
+gerichtsmediziner/3
+Üerprüft, ob alle Räume einmal besucht worden sind und ob der Gerichtsmediziner noch nicht angerufen hat.
+Ist das der Fall wird gerichtsmediziner_output/3 aufgerufen, ansonsten wird alles normal fortgesetzt.
+*/
 gerichtsmediziner(Out, Loc, A) :-
+	(	
+		vorbei(gerichtsmediziner),
+		output(Out, A)
+		);
 	(
 		was_there(eingangsbereich),
 		was_there(garten),
@@ -320,10 +477,15 @@ gerichtsmediziner(Out, Loc, A) :-
 		was_there(arbeitszimmer),
 		was_there(wohnzimmer),
 		was_there(schlafzimmer),
+		als_vorbei_markieren(gerichtsmediziner),
 		gerichtsmediziner_output(Out, Loc, A)
 		);
 	output(Out, A).
 
+/*
+gerichtsmediziner_output/3
+Gibt den an den Tatort angepassten Hinweisanruf des Gerichtsmediziners aus
+*/
 gerichtsmediziner_output(Out, Loc, A) :-
 	location(Loc, _),
 	tatort(Tatort),
@@ -349,7 +511,6 @@ tatort_tipp(wohnzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde S
 tatort_tipp(garten, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Grasreste gefunden haben.").
 tatort_tipp(arbeitszimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Papierschnipsel - scheinbar aus einem Aktenvernichter - gefunden haben.").
 tatort_tipp(eingangsbereich, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Schlammreste gefunden haben.").
-tatort_tipp(eingangsbereich_beamter, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Schlammreste gefunden haben.").
 tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
 
@@ -359,8 +520,6 @@ beamten_gesprochen(A) :-
 	person('Du', eingangsbereich),
 	person('Beamter', eingangsbereich),
 	output(beamten_vergessen, A).
-
-
 
 % Situation: normal
 
@@ -412,6 +571,7 @@ ask(Q, ["Dort", bist, du, doch, "bereits!"]) :-
 	person('Du', Location).
 
 
+
 ask(Q, A) :-
 	situation(X),
 	normal(X),
@@ -424,15 +584,24 @@ ask(Q, A) :-
 		(
 			member(ja, Input),
 			(
-				change_situation(garten),
-				add_location(garten),
-				randomize_child,
 				(
+					situation(eingangsbereich),
+					person('Du', eingangsbereich),
+					person('Beamter', eingangsbereich),
+					output(beamten_vergessen, A)
+					);
+
+				(
+					change_situation(garten),
+					add_location(garten),
+					randomize_child,
 					(
-						person('Alex', garten),
-						gerichtsmediziner(garten_kind, garten, A)
-						);
-					gerichtsmediziner(garten, garten, A)
+						(
+							person('Alex', garten),
+							gerichtsmediziner(garten_kind, garten, A)
+							);
+						gerichtsmediziner(garten, garten, A)
+						)
 					)
 				)
 			);
@@ -450,15 +619,25 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			change_situation(arbeitszimmer),
-			add_location(arbeitszimmer),
-			randomize_child,
 			(
 				(
-					person('Alex', arbeitszimmer),
-					gerichtsmediziner(arbeitszimmer_kind, arbeitszimmer, A)
+					situation(eingangsbereich),
+					person('Du', eingangsbereich),
+					person('Beamter', eingangsbereich),
+					output(beamten_vergessen, A)
 					);
-				gerichtsmediziner(arbeitszimmer, arbeitszimmer, A)
+				(
+					change_situation(arbeitszimmer),
+					add_location(arbeitszimmer),
+					randomize_child,
+					(
+						(
+							person('Alex', arbeitszimmer),
+							gerichtsmediziner(arbeitszimmer_kind, arbeitszimmer, A)
+							);
+						gerichtsmediziner(arbeitszimmer, arbeitszimmer, A)
+						)
+					)
 				)
 			);
 		output(no, A)
@@ -475,15 +654,25 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			change_situation(kueche),
-			add_location(kueche),
-			randomize_child,
 			(
 				(
-					person('Alex', kueche),
-					gerichtsmediziner(kueche_kind, kueche, A)
+					situation(eingangsbereich),
+					person('Du', eingangsbereich),
+					person('Beamter', eingangsbereich),
+					output(beamten_vergessen, A)
 					);
-				gerichtsmediziner(kueche, kueche, A)
+				(
+					change_situation(kueche),
+					add_location(kueche),
+					randomize_child,
+					(
+						(
+							person('Alex', kueche),
+							gerichtsmediziner(kueche_kind, kueche, A)
+							);
+						gerichtsmediziner(kueche, kueche, A)
+						)
+					)
 				)
 			);
 		output(no, A)
@@ -500,15 +689,25 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			change_situation(schlafzimmer),
-			add_location(schlafzimmer),
-			randomize_child,
 			(
 				(
-					person('Alex', schlafzimmer),
-					gerichtsmediziner(schlafzimmer_kind, schlafzimmer, A)
+					situation(eingangsbereich),
+					person('Du', eingangsbereich),
+					person('Beamter', eingangsbereich),
+					output(beamten_vergessen, A)
 					);
-				gerichtsmediziner(schlafzimmer, schlafzimmer, A)
+				(
+					change_situation(schlafzimmer),
+					add_location(schlafzimmer),
+					randomize_child,
+					(
+						(
+							person('Alex', schlafzimmer),
+							gerichtsmediziner(schlafzimmer_kind, schlafzimmer, A)
+							);
+						gerichtsmediziner(schlafzimmer, schlafzimmer, A)
+						)
+					)
 				)
 			);
 		output(no, A)
@@ -525,15 +724,25 @@ ask(Q, A) :-
 	(
 		(
 			member(ja, Input),
-			change_situation(wohnzimmer),
-			add_location(wohnzimmer),
-			randomize_child,
 			(
 				(
-					person('Alex', wohnzimmer),
-					gerichtsmediziner(wohnzimmer_kind, wohnzimmer, A)
+					situation(eingangsbereich),
+					person('Du', eingangsbereich),
+					person('Beamter', eingangsbereich),
+					output(beamten_vergessen, A)
 					);
-				gerichtsmediziner(wohnzimmer, wohnzimmer, A)
+				(
+					change_situation(wohnzimmer),
+					add_location(wohnzimmer),
+					randomize_child,
+					(
+						(
+							person('Alex', wohnzimmer),
+							gerichtsmediziner(wohnzimmer_kind, wohnzimmer, A)
+							);
+						gerichtsmediziner(wohnzimmer, wohnzimmer, A)
+						)
+					)
 				)
 			);
 		output(no, A)
@@ -554,16 +763,10 @@ ask(Q, A) :-
 			member(ja, Input),
 			(
 				(
-					person('Beamter', eingangsbereich),
-					gerichtsmediziner(eingangsbereich_beamter, A)
+					person('Alex', eingangsbereich),
+					gerichtsmediziner(eingangsbereich_kind, eingangsbereich, A)
 					);
-				(
-					(
-						person('Alex', eingangsbereich),
-						gerichtsmediziner(eingangsbereich_kind, eingangsbereich, A)
-						);
-					gerichtsmediziner(eingangsbereich, eingangsbereich, A)
-					)
+				gerichtsmediziner(eingangsbereich, eingangsbereich, A)
 				),
 			change_situation(eingangsbereich),
 			randomize_child
@@ -736,34 +939,39 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
-ask(Q, A) :-
-	situation(beamter),
-	(
-		(
-			member(täter, Q);
-			member(mörder, Q);
-			member(info, Q);
-			member(infos, Q);
-			member(information, Q);
-			member(informationen, Q)
-			),
-		nl,
-		writeln("Ich kann Ihnen nicht sagen wer den Mord tatsächlich begangen hat, aber ich kann Ihnen folgendes sagen:"),
-		output(taeter_info, A)
-	 );
-	(
-		(
-			member(tatverdächtigen, Q);
-			member(tatverdächtige, Q);
-			member(tatverdächtiger, Q)
-			),
-		output(taeter_info, A)
-		),
-	retract(person('Beamter', _)).
 
 ask(Q, A) :-
 	situation(beamter),
-	(member(beenden, Q);
+	(
+		(
+			(
+				member(täter, Q);
+				member(mörder, Q);
+				member(info, Q);
+				member(infos, Q);
+				member(information, Q);
+				member(informationen, Q)
+				),
+			nl,
+			writeln("Ich kann Ihnen nicht sagen wer den Mord tatsächlich begangen hat, aber ich kann Ihnen folgendes sagen:"),
+			output(taeter_info, A)
+		 );
+		(
+			(
+				member(tatverdächtigen, Q);
+				member(tatverdächtige, Q);
+				member(tatverdächtiger, Q)
+				),
+			output(taeter_info, A)
+			)
+		),
+	retract(person('Beamter', eingangsbereich)).
+
+
+ask(Q, A) :-
+	situation(beamter),
+	(
+		member(beenden, Q);
 		member(tschuess, Q);
 	 	member(gehen, Q);
 	 	member(ende, Q);
@@ -776,12 +984,11 @@ ask(Q, A) :-
 	read_sentence(Input),
 	(
 		(
-			(
-				member(nein, Input);
-				member(danke, Input)),
+			member(nein, Input),
 			person('Du', Location),
-			change_situation(Location),
-			output(gespraech_ende, A));
+			output(gespraech_ende, A),
+			change_situation(Location)
+			);
 		output(beamter_stay, A)
 		).
 
@@ -1062,7 +1269,7 @@ ask(Q,A) :-
 		output(no, A)
 		).
 
-%wollen wir hier nciiht auch Situation beamter zulassen? so nach dem motto: was koennen sie ueber das opfer sagen: er sagt dann haalt nur Opfer ist Putzfrau, weis nciht mehr
+%wollen wir hier nicht auch Situation beamter zulassen? so nach dem motto: was koennen sie ueber das opfer sagen: er sagt dann haalt nur Opfer ist Putzfrau, weis nciht mehr
 ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
 	situation(X),
 	normal(X),
@@ -1112,18 +1319,12 @@ ask(Q, A) :-
 		).
 
 ask(Q, A) :-
-	(
-		situation(eingangsbereich);
-		situation(eingangsbereich_beamter)
-		),
+	situation(eingangsbereich),
 	member(kommode, Q),
 	output(kommode, A).
 
 ask(Q, A) :-
-	(
-		situation(eingangsbereich);
-		situation(eingangsbereich_beamter)
-		),
+	situation(eingangsbereich),
 	(
 		member(garderobe, Q);
 		member(jacken, Q);
@@ -1425,14 +1626,6 @@ output(eingangsbereich_kind,
 	"\n\nDas Kind steht in der Mitte des des Eingangsbereiches und schaut nach oben zum Deckenlicht."]
 	).
 
-output(eingangsbereich_beamter, 
-	["Du betrittst den Eingangsbereich.",
-	"\n\nDort steht ein weiterer Beamter und schreibt etwas in sein Notizbuch.", 
-	"\n\nEr steht neben einer Kommode, auf der die ganzen Schlüssel der Familie sowie die neueste Post zu liegen scheint.",
-	"\nIn der Garderobe finden sich auf den ersten Blick nur einige Jacken und Schuhe, die viele Schlammspuren hinterlassen haben.",
-	"\n\nDas Licht an der Decke flackert nervös."]
-	).
-
 output(kommode,
 	["Du betrachtest die Kommode näher.",
 	"\n\nInsgesamt 3 Schlüsselbunde liegen dort - allerdings sind sie schwer zuzuordnen, da an keinem Schlüsselanhänger hängen.",
@@ -1477,7 +1670,7 @@ output(taeter_info,
 	).
 
 output(gespraech_ende, 
-	["Du", beendest, das, "Gespraech."]
+	["Du beendest das Gespräch."]
 	).
 
 output(kind, 

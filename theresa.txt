@@ -12,11 +12,11 @@ s: Du gehst zu dem Kind und beginnst ein Gespraech
 
 t: Hallo, was hast du beobachtet?
 
-k: Darauf will ich dir gerade nicht antworten.
+s: Darauf will ich dir gerade nicht antworten.
 
 t: Was willst du gerne machen
 
-k: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
+s: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
 
 *lachen*
 
@@ -24,11 +24,11 @@ k: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
 
 t: Kanntest du die Putzfrau gut
 
-k: Willst du unser Gespräch etwa schon beenden? Dann sag das doch einfach.
+s: Willst du unser Gespräch etwa schon beenden? Dann sag das doch einfach.
 
 t: Wo sind deine Eltern
 
-k: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
+s: Hey, du willst etwas von mir, stell eine sinnvolle Frage!
 
 % Okay dann geh ich einfach jetzt wieder
 
@@ -36,7 +36,7 @@ Ich: es geht eigentlich nur darum dass du das Kind nach den richtigen Sachen fra
 
 t: Wer war im Haus
 
-k: Darauf will ich dir gerade nicht antworten
+s: Darauf will ich dir gerade nicht antworten
 
 Ich: Erst Gespräch beenden, dann Raum wechseln!
 
@@ -44,7 +44,7 @@ Ich: Erst Gespräch beenden, dann Raum wechseln!
 
 t: Ich will das gespräch beenden
 
-k: Willst du unser Gespräch einfach so beenden?
+s: Willst du unser Gespräch einfach so beenden?
 
 t: ja
 
