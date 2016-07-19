@@ -1,7 +1,7 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.4.20)  18 JUL 2016 09:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.4.20)  19 JUL 2016 20:58
 entering extended mode
-**./Spiel.tex
-(Spiel.tex
+**./Kurzanleitung.tex
+(Kurzanleitung.tex
 LaTeX2e <2015/10/01> patch level 2
 Babel <3.9n> and hyphenation patterns for 69 languages loaded.
 ("C:\Users\Leona\AppData\Local\Programs\MiKTeX 2.9\tex\latex\base\article.cls"
@@ -521,8 +521,8 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 ("C:\Users\Leona\AppData\Local\Programs\MiKTeX 2.9\tex\latex\koma-script\scrpag
 e2.sty"
 Package: scrpage2 2015/10/03 v3.19a KOMA-Script package (page head and foot)
-) (Spiel.aux)
-\openout1 = `Spiel.aux'.
+) (Kurzanleitung.aux)
+\openout1 = `Kurzanleitung.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 33.
 LaTeX Font Info:    ... okay on input line 33.
@@ -658,65 +658,77 @@ File: omslmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 39.
 
-Underfull \hbox (badness 10000) in paragraph at lines 41--50
+Underfull \hbox (badness 10000) in paragraph at lines 39--48
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 75--79
 
  []
 
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 80.
+(Font)              <10> on input line 79.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 80.
+(Font)              <7> on input line 79.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 80.
+(Font)              <5> on input line 79.
 [1
 
 {C:/Users/Leona/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 88--89
+<bild1.png, id=11, 898.85812pt x 453.695pt>
+File: bild1.png Graphic file (type png)
+ <use bild1.png>
+Package pdftex.def Info: bild1.png used on input line 88.
+(pdftex.def)             Requested size: 629.1964pt x 317.58434pt.
 
+Overfull \hbox (415.80072pt too wide) in paragraph at lines 88--89
+[][] 
  []
 
-[2]
-Underfull \hbox (badness 10000) in paragraph at lines 99--110
+<bild2.png, id=13, 357.335pt x 463.23062pt>
+File: bild2.png Graphic file (type png)
+ <use bild2.png>
+Package pdftex.def Info: bild2.png used on input line 91.
+(pdftex.def)             Requested size: 250.13278pt x 324.25922pt.
 
+Overfull \hbox (36.7371pt too wide) in paragraph at lines 91--92
+[][] 
  []
 
+<bild3.png, id=14, 658.46pt x 387.4475pt>
+File: bild3.png Graphic file (type png)
+ <use bild3.png>
+Package pdftex.def Info: bild3.png used on input line 94.
+(pdftex.def)             Requested size: 460.91887pt x 271.2114pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 99--110
-
+Overfull \hbox (247.5232pt too wide) in paragraph at lines 94--95
+[][] 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 99--110
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 99--110
-
- []
-
-[3] (Spiel.aux) ) 
+[2 <./bild1.png>] [3 <./bild2.png> <./bild3.png>] (Kurzanleitung.aux) ) 
 Here is how much of TeX's memory you used:
- 5172 strings out of 493634
- 71811 string characters out of 3135239
- 149462 words of memory out of 3000000
- 8426 multiletter control sequences out of 15000+200000
- 53995 words of font info for 60 fonts, out of 3000000 for 9000
+ 5180 strings out of 493634
+ 71980 string characters out of 3135239
+ 148399 words of memory out of 3000000
+ 8430 multiletter control sequences out of 15000+200000
+ 50997 words of font info for 59 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 37i,10n,39p,523b,473s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dv
-ips/lm/lm-ec.enc}{C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dv
-ips/lm/lm-mathsy.enc}<C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
-pe1/public/lm/lmbx10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/font
-s/type1/public/lm/lmbx12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/
-fonts/type1/public/lm/lmr10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2
-.9/fonts/type1/public/lm/lmr12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTe
-X 2.9/fonts/type1/public/lm/lmr17.pfb><C:/Users/Leona/AppData/Local/Programs/Mi
-KTeX 2.9/fonts/type1/public/lm/lmro10.pfb><C:/Users/Leona/AppData/Local/Program
-s/MiKTeX 2.9/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Spiel.pdf (3 pages, 148823 bytes).
+ 37i,10n,39p,248b,453s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/User
+s/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ec.enc}{C:/User
+s/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathsy.enc}<C:/
+Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/lm/lmbx10.pfb>
+<C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/lm/lmbx12.
+pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/lm/lmr
+10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/lm/
+lmr12.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/
+lm/lmr17.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publ
+ic/lm/lmro10.pfb><C:/Users/Leona/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
+public/lm/lmsy10.pfb>
+Output written on Kurzanleitung.pdf (3 pages, 585871 bytes).
 PDF statistics:
- 42 PDF objects out of 1000 (max. 8388607)
+ 49 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

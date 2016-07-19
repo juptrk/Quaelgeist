@@ -297,6 +297,14 @@ waffe1(spaten, 'ein Spaten').
 waffe1(gift, 'ein Fläschchen mit Gift').
 waffe1(pokal, 'einen Pokal').
 
+
+/*
+normal/1
+Definiert, welche situationen "normal", d.h. orte und keine gespräche sind
+*/
+normal(X) :- 
+	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Mord (explizite Eingabe)
@@ -315,6 +323,7 @@ moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]
 lageplan/0
 Gibt den Lageplan des Hauses aus
 */
+
 lageplan :- nl,
 			writeln("                LAGEPLAN             "),
 			writeln("____/ _______________________________"),
@@ -506,7 +515,10 @@ gerichtsmediziner_output(Out, Loc, A) :-
 	output(Out, A).
 
 
-
+/*
+tatort_tipp/2
+Je nach Tatort gibt der Gerichtsmediziner einen anderen Hinweis der hier aufgelistet ist
+*/
 tatort_tipp(wohnzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Sofafusseln gefunden haben.").
 tatort_tipp(garten, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Grasreste gefunden haben.").
 tatort_tipp(arbeitszimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Papierschnipsel - scheinbar aus einem Aktenvernichter - gefunden haben.").
@@ -514,18 +526,7 @@ tatort_tipp(eingangsbereich, "Ich wollte Ihnen nur mitteilen, dass wir in der Wu
 tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
 
-
-beamten_gesprochen(A) :-
-	situation(eingangsbereich),
-	person('Du', eingangsbereich),
-	person('Beamter', eingangsbereich),
-	output(beamten_vergessen, A).
-
-% Situation: normal
-
-normal(X) :- 
-	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
-
+%%%%%%%%%%%% Match Anfragen %%%%%%%%%%%%%%%
 
 match([wo, bin, ich], ["Dein aktueller Aufenthaltsort ist", Ort]) :-
 	situation(X),
@@ -554,23 +555,31 @@ match([wo, ist, alex], [Ort]) :-
 match([wo, ist, das, kind], [Ort]) :-
 	person('Alex', Ort).
 
+match([wo, ist, kind], [Ort]) :-
+	person('Alex', Ort).
+
+/*
+Falls der Input ein anderer als der obige ist wird der Input mit dem ask-Prädikat weiter bearbeitet
+*/
 match(Input, Output) :-
 	ask(Input, Output).
 
-% muss immer als letzte match-Abfrage stehen
+/*
+Die letzte Anfrage matcht alle restlichen Inputs auf random Outputs
+*/
 match(_, Answer) :- 
 	situation(Situation),
 	random_answer(Situation, Answer).
 
-
-ask(Q, ["Dort", bist, du, doch, "bereits!"]) :- 
-	situation(X),
-	normal(X),
-	normal(Location),
-	member(Location, Q),
-	person('Du', Location).
+%%%%%%%%%%%%%%%%%%%% ask/2 %%%%%%%%%%%%%
+/* 
+ask/2 sucht nach Stichwörtern im Input um damit entsprechend vielfältig auf Inputs reagieren zu können
+*/
 
 
+%%%%%%%%%%%%%%
+%sk/2 zum wechseln zwischen den Räumen
+%%%%%%%%%%%%%%
 
 ask(Q, A) :-
 	situation(X),
@@ -608,6 +617,7 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
+
 ask(Q, A) :-
 	situation(X),
 	normal(X),
@@ -642,6 +652,7 @@ ask(Q, A) :-
 			);
 		output(no, A)
 		).
+
 
 ask(Q, A) :-
 	situation(X),
@@ -678,6 +689,7 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
+
 ask(Q, A) :-
 	situation(X),
 	normal(X),
@@ -712,6 +724,7 @@ ask(Q, A) :-
 			);
 		output(no, A)
 		).
+
 
 ask(Q, A) :-
 	situation(X),
@@ -808,114 +821,9 @@ ask(Q, A) :-
 		).
 
 
+%%%%%%%%%%%
+% Gespräch mit dem Beamten
 %%%%%%%%%%
-% Umschauen in Räumen 
-%%%%%%%%%%
-
-%%%%%%%%%%%%Schlafzimmer
-ask(Q,["Du", habst, die, "Bettdecke", an, und, darunter, liegt, eine, zusammengerollte, "Katze", und, "schläft."]) :-
-	situation(schlafzimmer),
-	(member(bett,Q);
-		member(decke,Q);
-		member(bettdecke, Q);
-		member(wölbung, Q)
-		).
-
-ask(Q,["Du", kraulst, die, "Katze", und, sie, schnurrt, zufrieden, vor, sich, "hin."]) :-
-	situation(schlafzimmer),
-	member(katze,Q).
-
-ask(Q,["Du", gehst, zum, "Nachtisch", und, betrachtest, die, "Uhr", genauer, und, stellst, "fest,", dass, sie, sehr, alt, "ist.", "\nVermutlich", ein, "Erbstück,", daher, passt, sie, nicht, zum, modernen, "Rest", des, "Zimmers.", "\nDa", bemerkst, "du,", dass, die, "Uhr", auf, einem, dicken, "Buch", "steht."]) :-
-	situation(schlafzimmer),
-	(member(nachttisch,Q);
-		member(tisch,Q);
-		member(uhr, Q)
-		).
-
-ask(Q,["Das Buch trägt den Titel: Das perfekte Verbrechen."]) :-
-	situation(schlafzimmer),
-	member(buch,Q).
-
-ask(Q,["Du", öffnest, den, "Schrank", und, bist, von, der, "Fülle", an, "Klamotten", "beeindruckt -", "Hemden, Hosen, Kleider, Taschen, Schuhe, Krawatten-", in, allen, möglichen, "Farben und Mustern.", "\nWährend", du, noch, ganz, fasziniert, die, "Kleidung", "begutachtest,", fällt, die, plötzlich, "auf,", dass, sich, hinten, im, "Schrank", eine, versteckte, "Türe", "befindet."]) :-
-	situation(schlafzimmer),
-	(member(schrank,Q);
-		member(kleiderschrank,Q);
-		member(sschrenktür, Q)
-		).
-
-ask(Q,["Du versuchst die Türe zu öffnen, du rüttelst kräftig daran, doch leider beibst du dabei erfolglos."]) :-
-	situation(schlafzimmer),
-	(member(türe,Q);
-		member(tür,Q);
-		member(versuchen, Q) %falls jemand es nochmal versuchen will die Tuere zu oeffnen
-		).
-
-ask(Q, ["Ein Schlüssel für die Türe im Schrank ist weit und breit nicht zu sehen."]) :-
-	situation(schlafzimmer),
-	member(schlüssel, Q).
-
-%%%%%%%%%%%%Wohnzimmer
-ask(Q, ["Das bequeme weiße Sofa sieht wie frisch gereinigt aus, kein noch so kleiner Fleck ist zu sehen."]) :-
-	situation(wohnzimmer),
-	(member(sofa,Q);
-		member(kissen,Q);
-		member(sofaecke,Q)
-		).
-
-ask(Q, ["Von hier hat man den gesamten Garten gut im Überblick.", "\nDie Fensterscheiben sind so getönt, dass man gut raus schauen kann, aber niemand vom Garten reinschauen kann."]) :-
-	situation(wohnzimmer),
-	member(fenster, Q).
-
-ask(Q, ["Du schaust dir die Bücher an - eine Brockhaus Enzyklopädie, ein Atlas, ein paar Romane, hier und dort ein Kinderbuch - nicht weiter interessant."]) :-
-	situation(wohnzimmer),
-	(member(bücherwand,Q);
-		member(bücher,Q);
-		member(buch,Q);
-		member(bücherregal, Q)
-		).
-
-ask(Q, ["Ein Buch zu lesen ist jetzt keine gute Idee, du musst einen Fall lösen, sonst bist du deinen Job los."]) :-
-	situation(wohnzimmer),
-	member(lesen, Q).
-
-
-ask(Q, A) :-
-	situation(wohnzimmer),
-	(member(gemälde, Q);
-		member(bild, Q)
-		),
-	writeln("Auf dem Bild sind 2 Reiter auf Pferden zu sehen."),
-	nl,
-	(
-		(
-			vorbei(morse),
-			output(geheimbekannt, A)
-			);
-		output(geheimunbekannt, A)
-		).
-
-
-%%%%%%%%%%%%%%Geheimgang
-
-ask(Q,["Du gehst näher heran, bückst dich und hebst einen blutverschmierten Gegenstand auf.", "\nEs ist:", Wort]):-
-	situation(geheimgang),
-	(member(boden, Q);
-		member(gegenstand, Q);
-		member(liegen, Q);
-		member(liegt, Q)
-		),
-	tatwaffe(Waffe),
-	waffe1(Waffe,Wort).
-
-
-ask(Q, A) :-
-	situation(geheimgang),
-	member(raus, Q),
-	change_situation(schlafzimmer),
-	nl,
-	writeln("Du gehst den Gang weiter entlang und am Ende ist eine Tür. Diese lässt sich von dieser Seite problemlos ohne Schlüssel öffnen."),
-	output(schlafzimmer, A).
-%%%%%%%%%%%%%%%
 
 ask(Q, A) :-
 	person('Beamter', eingangsbereich),
@@ -994,7 +902,13 @@ ask(Q, A) :-
 
 
 
-% Gespräch beginnen
+%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%
+% Gespräch mit dem Kind
+%%%%%%%%%%%%%%%
+
 ask(Q, A) :-
 	person('Alex', Location),
 	situation(Location), 
@@ -1014,14 +928,7 @@ ask(Q, A) :-
 			);
 		output(no, A)
 		).
-%wenn ales nicht in dem Zimmer ist, du aber versuchst ihn anzusprechen
-ask(Q, ["Das Kind ist nicht in diesem Raum, such es erstmal, bevor du es ansprichst."]) :-
-	person('Alex', Location),
-	not(situation(Location)), 
-	(
-		member(kind, Q);
-		member(alex, Q)
-		).
+
 
 ask(Q, A) :-
 	situation(kind),
@@ -1269,55 +1176,124 @@ ask(Q,A) :-
 		output(no, A)
 		).
 
-%wollen wir hier nicht auch Situation beamter zulassen? so nach dem motto: was koennen sie ueber das opfer sagen: er sagt dann haalt nur Opfer ist Putzfrau, weis nciht mehr
-ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
-	situation(X),
-	normal(X),
-	member(opfer, Q).
+ask(Q, ["Heute ist kein schöner Tag."]):-
+	situation(kind),
+	member(heute, Q).
 
 
-ask(Q, []) :- 
-	situation(X),
-	normal(X),
-	member(lageplan, Q),
-	lageplan.
+%%%%%%%%%%%%%%%%%%%%
 
 
-ask(Q, []) :- 
-	situation(X),
-	normal(X),
-	(
-		member(tatorte, Q);
-		member(räume, Q)
-		),
-	nl,
-	writeln("Alle Räume im Haus kommen als Tatort in Frage:"),
-	lageplan.
+%%%%%%%%%%
+% Umschauen in Räumen 
+%%%%%%%%%%
+
+%%%%%%%%%%%%Schlafzimmer
+ask(Q,["Du", habst, die, "Bettdecke", an, und, darunter, liegt, eine, zusammengerollte, "Katze", und, "schläft."]) :-
+	situation(schlafzimmer),
+	(member(bett,Q);
+		member(decke,Q);
+		member(bettdecke, Q);
+		member(wölbung, Q)
+		).
+
+ask(Q,["Du", kraulst, die, "Katze", und, sie, schnurrt, zufrieden, vor, sich, "hin."]) :-
+	situation(schlafzimmer),
+	member(katze,Q).
+
+ask(Q,["Du", gehst, zum, "Nachtisch", und, betrachtest, die, "Uhr", genauer, und, stellst, "fest,", dass, sie, sehr, alt, "ist.", "\nVermutlich", ein, "Erbstück,", daher, passt, sie, nicht, zum, modernen, "Rest", des, "Zimmers.", "\nDa", bemerkst, "du,", dass, die, "Uhr", auf, einem, dicken, "Buch", "steht."]) :-
+	situation(schlafzimmer),
+	(member(nachttisch,Q);
+		member(tisch,Q);
+		member(uhr, Q)
+		).
+
+ask(Q,["Das Buch trägt den Titel: Das perfekte Verbrechen."]) :-
+	situation(schlafzimmer),
+	member(buch,Q).
+
+ask(Q,["Du", öffnest, den, "Schrank", und, bist, von, der, "Fülle", an, "Klamotten", "beeindruckt -", "Hemden, Hosen, Kleider, Taschen, Schuhe, Krawatten-", in, allen, möglichen, "Farben und Mustern.", "\nWährend", du, noch, ganz, fasziniert, die, "Kleidung", "begutachtest,", fällt, die, plötzlich, "auf,", dass, sich, hinten, im, "Schrank", eine, versteckte, "Türe", "befindet."]) :-
+	situation(schlafzimmer),
+	(member(schrank,Q);
+		member(kleiderschrank,Q);
+		member(sschrenktür, Q)
+		).
+
+ask(Q,["Du versuchst die Türe zu öffnen, du rüttelst kräftig daran, doch leider beibst du dabei erfolglos."]) :-
+	situation(schlafzimmer),
+	(member(türe,Q);
+		member(tür,Q);
+		member(versuchen, Q) %falls jemand es nochmal versuchen will die Tuere zu oeffnen
+		).
+
+ask(Q, ["Ein Schlüssel für die Türe im Schrank ist weit und breit nicht zu sehen."]) :-
+	situation(schlafzimmer),
+	member(schlüssel, Q).
+
+%%%%%%%%%%%%Wohnzimmer
+ask(Q, ["Das bequeme weiße Sofa sieht wie frisch gereinigt aus, kein noch so kleiner Fleck ist zu sehen."]) :-
+	situation(wohnzimmer),
+	(member(sofa,Q);
+		member(kissen,Q);
+		member(sofaecke,Q)
+		).
+
+ask(Q, ["Von hier hat man den gesamten Garten gut im Überblick.", "\nDie Fensterscheiben sind so getönt, dass man gut raus schauen kann, aber niemand vom Garten reinschauen kann."]) :-
+	situation(wohnzimmer),
+	member(fenster, Q).
+
+ask(Q, ["Du schaust dir die Bücher an - eine Brockhaus Enzyklopädie, ein Atlas, ein paar Romane, hier und dort ein Kinderbuch - nicht weiter interessant."]) :-
+	situation(wohnzimmer),
+	(member(bücherwand,Q);
+		member(bücher,Q);
+		member(buch,Q);
+		member(bücherregal, Q)
+		).
+
+ask(Q, ["Ein Buch zu lesen ist jetzt keine gute Idee, du musst einen Fall lösen, sonst bist du deinen Job los."]) :-
+	situation(wohnzimmer),
+	member(lesen, Q).
 
 
 ask(Q, A) :-
-	(
-		member(verdächtigung, Q);
-		member(verdächtige, Q);
-		member(verdächtigter, Q);
-		member(verdächtig, Q);
-		member(täter, Q)
+	situation(wohnzimmer),
+	(member(gemälde, Q);
+		member(bild, Q)
 		),
+	writeln("Auf dem Bild sind 2 Reiter auf Pferden zu sehen."),
 	nl,
-	writeln("Möchtest du eine Verdächtigung äußern?"),
-	nl,
-	read_sentence(Input),
 	(
 		(
-			member(ja, Input),
-			verdaechtigungszahl(Anzahl),
-			Anzahl < 3,
-			verdaechtigung(A),
-			set_verdaechtigung
+			vorbei(morse),
+			output(geheimbekannt, A)
 			);
-		output(no, A)
+		output(geheimunbekannt, A)
 		).
 
+
+%%%%%%%%%%%%%%Geheimgang
+
+ask(Q,["Du gehst näher heran, bückst dich und hebst einen blutverschmierten Gegenstand auf.", "\nEs ist:", Wort]):-
+	situation(geheimgang),
+	(member(boden, Q);
+		member(gegenstand, Q);
+		member(liegen, Q);
+		member(liegt, Q)
+		),
+	tatwaffe(Waffe),
+	waffe1(Waffe,Wort).
+
+
+ask(Q, A) :-
+	situation(geheimgang),
+	member(raus, Q),
+	change_situation(schlafzimmer),
+	nl,
+	writeln("Du gehst den Gang weiter entlang und am Ende ist eine Tür. Diese lässt sich von dieser Seite problemlos ohne Schlüssel öffnen."),
+	output(schlafzimmer, A).
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%% Eingangsbereich
 ask(Q, A) :-
 	situation(eingangsbereich),
 	member(kommode, Q),
@@ -1332,6 +1308,9 @@ ask(Q, A) :-
 		),
 	output(garderobe, A).
 
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% Garten
 
 ask(Q, A) :-
 	situation(garten),
@@ -1364,6 +1343,10 @@ ask(Q, A) :-
 		),
 	output(sitzecke, A).
 
+
+%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%% Arbeitszimmer
 
 ask(Q, A) :-
 	situation(arbeitszimmer),
@@ -1412,6 +1395,9 @@ ask(Q, A) :-
 		),
 	output(dartscheibe, A).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%% Küche
 
 ask(Q, A) :-
 	situation(kueche),
@@ -1440,6 +1426,114 @@ ask(Q, A) :-
 		member(arbeitsfläche, Q)
 		),
 	output(kuechenzeile, A).
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%
+% Allgemeine Anfrangen und Antworten
+%%%%%%%%%%%%%%%%%%
+
+ask(Q, ["Das Kind ist nicht in diesem Raum, such es erstmal, bevor du es ansprichst."]) :-
+	person('Alex', Location),
+	not(situation(Location)), 
+	(
+		member(kind, Q);
+		member(alex, Q)
+		).
+
+
+ask(Q,["Das", "Opfer", ist, die, "Putzfrau", der, "Familie."]) :-
+	situation(X),
+	(
+		normal(X);
+		X == beamter
+		),
+	member(opfer, Q).
+
+
+ask(Q, []) :- 
+	situation(X),
+	normal(X),
+	member(lageplan, Q),
+	lageplan.
+
+
+ask(Q, []) :- 
+	situation(X),
+	normal(X),
+	(
+		member(tatorte, Q);
+		member(räume, Q);
+		member(orte, Q)
+		),
+	nl,
+	writeln("Alle Räume im Haus kommen als Tatort in Frage:"),
+	lageplan.
+
+
+
+ask(Q, ["Willst du wissen wo das Kind ist, dann frag 'Wo ist das Kind?'."]) :-
+	member(suchen, Q);
+	member(suche, Q).
+
+ask(Q,Waffen):-
+			(member(waffen, Q);
+				member(waffe, Q);
+				member(tatwaffe, Q);
+				member(tatwaffen, Q)),
+			alle_waffen(Waffen),
+			write("Mögliche Tatwaffen sind:"),
+			situation(X),
+			normal(X).
+
+ask(Q, ["Such dir einen Raum aus in den du laufen willst."]):-
+	situation(X),
+	normal(X),
+	(member(herumlaufen, Q);
+		member(umsehen, Q);
+		member(umschauen,Q)).
+
+ask(Q, ["Dort", bist, du, doch, "bereits!"]) :- 
+	situation(X),
+	normal(X),
+	normal(Location),
+	member(Location, Q),
+	person('Du', Location).
+
+
+%%%%%%%%%%%%%%%
+% Verdächtigung
+%%%%%%%%%%%%%%
+ask(Q, A) :-
+	(
+		member(verdächtigung, Q);
+		member(verdächtige, Q);
+		member(verdächtigter, Q);
+		member(verdächtig, Q);
+		member(täter, Q)
+		),
+	nl,
+	writeln("Möchtest du eine Verdächtigung äußern?"),
+	nl,
+	read_sentence(Input),
+	(
+		(
+			member(ja, Input),
+			verdaechtigungszahl(Anzahl),
+			Anzahl < 3,
+			verdaechtigung(A),
+			set_verdaechtigung
+			);
+		output(no, A)
+		).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% output/2 %%%%%%%%%%%%%
+/*
+output/2 definiert die größten Ausgaben um den Code übersichtlicher zu gestalten.
+
+Diese werden nicht einzeln kommentiert - auf grund ihres Inhaltes sollte klar sein, wo sie zuzuordnen sind
+*/
 
 
 output(garten,
@@ -1650,23 +1744,23 @@ output(geheimgang,
 	).
 
 output(taeter_info, 
-	["Unsere", "Tatverdächtigen", sind, diese, sechs, "Personen:",
-	"\n\nDer", "Vater:", "Er", ist, 39, "Jahre", alt, und, ein, echter, "Workaholic.",
-	"\nEr", hat, seine, "Frau", schon, "länger", im, "Verdacht,", "eine", "Affäre", mit, einem, "Freund", oder, "Angestellten", zu, "haben.",
-	"\n\nDie", "Mutter:", "Sie", ist, 32, "Jahre", alt, und, im, "Moment", unzufrieden, mit, ihrem, "Leben.",
-	"\nSie", hat, ihre, "Arbeit", "für", die, "Familie", "aufgegeben,", doch, ihr, "Ehemann", ist, selten, zuhause, und, das, gemeinsame, "Kind", ist, sehr, "anstrengend.",
-	"\nDennoch", beteuert, "sie,", immer, treu, gewesen, zu, "sein.",
-	"\n\nDer", "Gärtner:", "Er", ist, 27, "Jahre", alt, und, stammt, "ursprünglich", aus, "Mexiko.",
-	"\nEr", ist, sehr, "gutaussehend,", macht, viel, "Sport", und, ist, vorallem, morgens, im, "Haus,", weshalb, der, "Ehemann", ihn, als, erstes, einer, "Affäre", mit, seiner, "Frau", "verdächtigte.",
-	"\nMan", hat, dennoch, das, "Gefühl,", dass, ihm, der, "Job", hier, viel, "Spaß", macht, und, er, ihn, auf, keine, "Fall", verlieren, "will.",
-	"\n\nDer", "Koch:", "Er", ist, 59, "Jahre", alt, und, arbeitet, schon, seit, vielen, "Jahren", "für", den, "Mann", und, seine, "Familie.",
-	"\nAllerdings", ist, er, nicht, mehr, so, oft, im, "Haus,", da, er, etwas, gegen, dass, "restliche,", aus, dem, "Ausland", stammende, "Personal", "hat.",
-	"\n\nDer", "Nachbar:", "Er", ist, 34, "Jahre", "alt,", nicht, verheiratet, und, wohnt, erst, seit, einem, "Jahr", "nebenan.",
-	"\nIn", letzter, "Zeit", scheint, sich, die, "Mutter", "oft", mit, ihm, zu, "treffen,", weshalb, der, "Ehemann", auch, ihn, bereits, als, "mögliche", "Affäre", in, "Betracht", gezogen, "hatte.",
-	"\nSeit", ein, paar, "Monaten", "häufen", sich, bei, ihm, aber, die, "Besuche", einer, anderen, "Frau,", weshalb, der, "Ehemann", diesen, "Gedanken", bereits, verworfen, "hat.",
-	"\n\nDer", "Besuch:", "Er", ist, die, "große", "Unbekannte", auf, unserer, "Liste.",
-	"\nEr", muss, ein, "Freund", des, "Ehemannes", gewesen, "sein -", dieser, jedoch, wollte, dazu, vor, seiner, "Frau", nichts, "sagen.",
-	"\nMöglicherweise", handelt, es, sich, um, einen, "Privatdetektiv?"]
+	["Unsere Tatverdächtigen sind diese sechs Personen:",
+	"\n\nDer Vater: Er ist 39 Jahre alt und ein echter Workaholic.",
+	"\nEr hat seine Frau schon länger im Verdacht, eine Affäre mit einem Freund oder Angestellten zu haben.",
+	"\n\nDie Mutter: Sie ist 32 Jahre alt und im Moment unzufrieden mit ihrem Leben.",
+	"\nSie hat ihre Arbeit für die Familie aufgegeben, doch ihr Ehemann ist selten zuhause und das gemeinsame Kind ist sehr anstrengend.",
+	"\nDennoch beteuert sie, immer treu gewesen zu sein.",
+	"\n\nDer Gärtner: Er ist 27 Jahre alt und stammt ursprünglich aus Mexiko.",
+	"\nEr ist sehr gutaussehend, macht viel Sport und ist vorallem morgens im Haus, weshalb der Ehemann ihn als erstes einer Affäre mit seiner Frau verdächtigte.",
+	"\nMan hat dennoch das Gefühl, dass ihm der Job hier viel Spaß macht und er ihn auf keinen Fall verlieren will.",
+	"\n\nDer Koch: Er ist 59 Jahre alt und arbeitet schon seit vielen Jahren für den Mann und seine Familie.",
+	"\nAllerdings ist er nicht mehr so oft im Haus, da er etwas gegen dass restliche, aus dem Ausland stammende Personal hat.",
+	"\n\nDer Nachbar: Er ist 34 Jahre alt, nicht verheiratet und wohnt erst seit einem Jahr nebenan.",
+	"\nIn letzter Zeit scheint sich die Mutter oft mit ihm zu treffen, weshalb der Ehemann auch ihn bereits als mögliche Affäre in Betracht gezogen hatte.",
+	"\nSeit ein paar Monaten häufen sich bei ihm aber die Besuche einer anderen Frau, weshalb der Ehemann diesen Gedanken bereits verworfen hat.",
+	"\n\nDer Besuch: Er ist die große Unbekannte auf unserer Liste.",
+	"\nEr muss ein Freund des Ehemannes gewesen sein - dieser jedoch wollte dazu vor seiner Frau nichts sagen.",
+	"\nMöglicherweise handelt es sich um einen Privatdetektiv?"]
 	).
 
 output(gespraech_ende, 
@@ -1674,29 +1768,29 @@ output(gespraech_ende,
 	).
 
 output(kind, 
-	["Du", gehst, zu, dem, "Kind", und, beginnst, ein, "Gespraech."]
+	["Du gehst zu dem Kind und beginnst ein Gespraech."]
 	).
 
 output(beamter, 
-	["Du", sprichst, den, "Beamten", im, "Eingangsbereich", "an.",
-	"\n\n'Guten", "Tag!", "Was", "können", "Sie", mir, "über", unseren, "Fall", "erzählen?'",
-	"\n'Ich", denke, "nicht,", dass, ich, mehr, "weiß", als, "Sie -", ich, bin, gerade, "dabei,", mir, die, "Informationen", "über", die, "Tatverdächtigen", "aufzuschreiben.'"]
+	["Du sprichst den Beamten im Eingangsbereich an.",
+	"\n\n'Guten Tag! Was können Sie mir über unseren Fall erzählen?'",
+	"\n'Ich denke nicht, dass ich mehr weiß als Sie - ich bin gerade dabei, mir die Informationen über die Tatverdächtigen aufzuschreiben.'"]
 	).
 
 output(no, 
-	["Okay,", dann, eben, "nicht."]
+	["Okay, dann eben nicht."]
 	).
 
 output(no_hinweis, 
-	["Einen", weiteren, "Hinweis", musst, du, dir, erst, "erarbeiten."]
+	["Einen weiteren Hinweis musst du dir erst erarbeiten."]
 	).
 
 output(no_tipp, 
-	["Ich", gebe, dir, jetzt, keinen, weiteren, "Tipp."]
+	["Ich gebe dir jetzt keinen weiteren Tipp."]
 	).
 
 output(no_hilfe, 
-	["Ich", habe, gerade, keine, "Lust", dir, zu, "helfen."]
+	["Ich habe gerade keine Lust dir zu helfen."]
 	).
 
 output(falscher_rat1,
@@ -1711,27 +1805,23 @@ output(falscher_rat2,
 	).
 
 output(no_bitte, 
-	["Ohne", "Bitte", geht, hier, "garnichts -" , "Deine", "Eltern", haben, bei, der, "Erziehung", ja, mal, voll, "versagt."]
+	["Ohne Bitte geht hier garnichts - Deine Eltern haben bei der Erziehung ja mal voll versagt."]
 	).
 
 output(help, 
-	["Ich", hoffe, ich, konnte, dir, "helfen."]
-	).
-
-output(nothing, 
-	[]
+	["Ich hoffe ich konnte dir helfen."]
 	).
 
 output(solved, 
-	["Du", hast, den, "Fall", "gelöst,", herzlichen, "Glückwunsch!","\nBeende", das, "Programm", mit, "'Quälgeist beenden'."]
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'."]
 	).
 
-output(wrong_suspicion, ["Dieser", "Verdacht", ist, leider, "falsch,", versuche, es, "später", "nochmal!", "Du", hast, noch, Anzahl, "Verdächtigungsversuche", "übrig."]) :-
+output(wrong_suspicion, ["Dieser Verdacht ist leider falsch, versuche es später nochmal! Du hast noch Anzahl Verdächtigungsversuche übrig."]) :-
 	verdaechtigungszahl(AlteAnzahl),
 	Anzahl is 2 - AlteAnzahl.
 
 output(beamter_stay, 
-	["Okay,", was, wollen, sie, "wissen?"]
+	["Okay, was wollen sie wissen?"]
 	).
 
 output(geheimunbekannt,
