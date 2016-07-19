@@ -253,7 +253,7 @@ Beinhaltet alle möglichen Orte
 */
 ort(eingangsbereich).
 ort(schlafzimmer).
-ort(kueche).
+ort(küche).
 ort(garten).
 ort(wohnzimmer).
 ort(arbeitszimmer).
@@ -287,7 +287,7 @@ Beinhaltet alle möglichen Täter
 */
 taeter(vater).
 taeter(mutter).
-taeter(gaertner).
+taeter(gärtner).
 taeter(koch).
 taeter(nachbar).
 taeter(besuch).
@@ -309,7 +309,7 @@ eltern(mutter).
 angestellte/1
 definiert Gärtner und Koch zusätzlich als Angestellte
 */
-angestellte(gaertner).
+angestellte(gärtner).
 angestellte(koch).
 
 /*
@@ -318,7 +318,7 @@ gibt zu allen möglichen Orten eine grammatikalisch passende Ausgabe des Namens z
 */
 location(eingangsbereich, 'der Eingangsbereich').
 location(schlafzimmer, 'das Schlafzimmer').
-location(kueche, 'die Küche').
+location(küche, 'die Küche').
 location(garten, 'der Garten').
 location(wohnzimmer, 'das Wohnzimmer').
 location(arbeitszimmer, 'das Arbeitszimmer').
@@ -341,7 +341,7 @@ normal/1
 Definiert, welche situationen "normal", d.h. orte und keine gespräche sind
 */
 normal(X) :- 
-	member(X, [eingangsbereich, garten, kueche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
+	member(X, [eingangsbereich, garten, küche, arbeitszimmer, wohnzimmer, schlafzimmer, geheimgang]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -540,7 +540,7 @@ gerichtsmediziner(Out, Loc, A) :-
 	(
 		was_there(eingangsbereich),
 		was_there(garten),
-		was_there(kueche),
+		was_there(küche),
 		was_there(arbeitszimmer),
 		was_there(wohnzimmer),
 		was_there(schlafzimmer),
@@ -581,7 +581,7 @@ tatort_tipp(wohnzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde S
 tatort_tipp(garten, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Grasreste gefunden haben.").
 tatort_tipp(arbeitszimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Papierschnipsel - scheinbar aus einem Aktenvernichter - gefunden haben.").
 tatort_tipp(eingangsbereich, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Schlammreste gefunden haben.").
-tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
+tatort_tipp(küche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
 
 
@@ -736,15 +736,15 @@ ask(Q, A) :-
 					output(beamten_vergessen, A)
 					);
 				(
-					change_situation(kueche),
-					add_location(kueche),
+					change_situation(küche),
+					add_location(küche),
 					randomize_child,
 					(
 						(
-							person('Alex', kueche),
-							gerichtsmediziner(kueche_kind, kueche, A)
+							person('Alex', küche),
+							gerichtsmediziner(küche_kind, küche, A)
 							);
-						gerichtsmediziner(kueche, kueche, A)
+						gerichtsmediziner(küche, küche, A)
 						)
 					)
 				)
@@ -1129,7 +1129,7 @@ ask(Q, A) :-
 	(member(rat, Q);
 		member(ratschlag, Q)
 		),
-	(moerder(gaertner), output(falscher_rat1, A);
+	(moerder(gärtner), output(falscher_rat1, A);
 		output(falscher_rat2,A)).
 
 ask(Q,A):-
@@ -1464,17 +1464,17 @@ ask(Q, A) :-
 %%%%%%%%%%%%%%%%%%%%% Küche
 
 ask(Q, A) :-
-	situation(kueche),
+	situation(küche),
 	(	
 		member(kühlschrank, Q);
 		member(schrank, Q);
 		member(schrankwand, Q);
 		member(küchenschrank, Q)
 		),
-	output(kuechenschrank, A).
+	output(küchenschrank, A).
 
 ask(Q, A) :-
-	situation(kueche),
+	situation(küche),
 	(	
 		member(essensreste, Q);
 		member(reste, Q);
@@ -1483,13 +1483,13 @@ ask(Q, A) :-
 	output(essensreste, A).
 
 ask(Q, A) :-
-	situation(kueche),
+	situation(küche),
 	(	
 		member(herd, Q);
-		member(kuechenzeile, Q);
+		member(küchenzeile, Q);
 		member(arbeitsfläche, Q)
 		),
-	output(kuechenzeile, A).
+	output(küchenzeile, A).
 
 %%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1591,7 +1591,10 @@ ask(Q, A) :-
 		output(no, A)
 		).
 
+%%%%%%%%%%%%%%Spiel beenden
 
+ask(Q,["Wenn du das Spiel beenden möchtest, musst du 'Quälgeist beenden' eingeben"]) :-
+	member(beenden, Q).
 %%%%%%%%%%%%%%%%%%%%%%%% output/2 %%%%%%%%%%%%%
 /*
 output/2 definiert die größten Ausgaben um den Code übersichtlicher zu gestalten.
@@ -1693,14 +1696,14 @@ output(dartscheibe,
 	"\nEs scheint wohl der Nachbar zu sein, dessen Bild an der Dartscheibe hängt."]
 	).
 
-output(kueche, 
+output(küche, 
 	["Du betrittst die Küche.",
 	"\n\nDer Raum ist beinahe quadratisch mit einer großen Küchenzeile auf der gegenüberliegenden und einer Schrankwand mit Kühlschrank auf der linken Seite.",
 	"\nEin Fenster zum Garten sorgt für viel Licht und einen schönen Ausblick auf den Garten.",
 	"\n\nDie letzte Person, die hier gekocht hat, scheint nicht sehr ordentlich gewesen zu sein,",
 	"\nden überall liegen noch Reste der Mahlzeit herum."]).
 
-output(kueche_kind, 
+output(küche_kind, 
 	["Du betrittst die Küche.",
 	"\n\nDer Raum ist beinahe quadratisch mit einer großen Küchenzeile auf der gegenüberliegenden und einer Schrankwand mit Kühlschrank auf der linken Seite.",
 	"\nEin Fenster zum Garten sorgt für viel Licht und einen schönen Ausblick auf den Garten.",
@@ -1708,13 +1711,13 @@ output(kueche_kind,
 	"\nden überall liegen noch Reste der Mahlzeit herum.",
 	"\n\nDas Kind steht am Fenster und schaut in den Garten."]).
 
-output(kuechenzeile,
+output(küchenzeile,
 	["Du betrachtest Herd, Waschbecken und Arbeitsfläche näher.",
 	"\n\nAuch hier finden sich überall Essensreste, scheinbar irgendetwas mit Tomaten.",
 	"\nAnsonsten finden sich hier allerdings keine Hinweise auf die zu untersuchenden Geschehnisse."]
 	).
 
-output(kuechenschrank,
+output(küchenschrank,
 	["Du untersuchst die Schrankwand und den Kühlschrank.",
 	"\n\nIn den Schränken stehen lediglich Teller, sonstiges Geschirr und Gewürze.",
 	"\n\nIm Kühlschrank aber findest du etwas interessantes:",
@@ -1877,7 +1880,7 @@ output(help,
 	).
 
 output(solved, 
-	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'."]
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'."] 
 	).
 
 output(wrong_suspicion, ["Dieser Verdacht ist leider falsch, versuche es später nochmal! Du hast noch", Anzahl, "Verdächtigungsversuche übrig."]) :-
