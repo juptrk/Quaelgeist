@@ -497,9 +497,10 @@ verdaechtigungComplete(Moerderverdacht,Tatwaffeverdacht, Ortverdacht, A) :-
 		moerder(Moerderverdacht),
 		tatwaffe(Tatwaffeverdacht),
 		tatort(Ortverdacht),
-		output(solved, A)
+		solution(A)
 		);
 	output(wrong_suspicion, A).
+
 
 /*
 random_answer/2
@@ -583,6 +584,47 @@ tatort_tipp(arbeitszimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wund
 tatort_tipp(eingangsbereich, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Schlammreste gefunden haben.").
 tatort_tipp(kueche, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Lebensmittelreste gefunden haben.").
 tatort_tipp(schlafzimmer, "Ich wollte Ihnen nur mitteilen, dass wir in der Wunde Daunenfedern gefunden haben.").
+
+
+
+/*
+solution/1
+Gibt das Motiv des Mörders aus
+*/
+solution(A) :-
+	moerder(Moerder),
+	motiv(Moerder, A).
+
+motiv(gärtner,
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'.",
+	"\n\nDie Beweise zeigen eindeutig, dass der Gärtner der Mörder war.",
+	"\nBei der Befragung ergibt sich, dass die Putzfrau die Beziehung mit ihm wegen des Besuchs des Hauses - ein Freund",
+	"\ndes Vaters - beendet hatte, woraufhin er sehr wütend wurde."]).
+motiv(vater,
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'.",
+	"\n\nDie Beweise zeigen eindeutig, dass der Vater der Mörder war.",
+	"\nBei der Befragung ergibt sich, dass die Putzfrau ihn wegen einer Lohnkürzung angegriffen hatte, woraufhin",
+	"\ner sie in Notwehr umbrachte."]).
+motiv(mutter,
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'.",
+	"\n\nDie Beweise zeigen eindeutig, dass die Mutter die Mörderin war.",
+	"\nBei der Befragung ergibt sich, dass sie dachte, die Putzfrau würde ihren Mann anflirten, weshalb sie wütend wurde",
+	"\nund sie im Affekt umbrachte."]).
+motiv(koch,
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'.",
+	"\n\nDie Beweise zeigen eindeutig, dass der Koch der Mörder war.",
+	"\nBei der Befragung ergibt sich, dass er die Putzfrau noch nie leiden konnte und als er das Gefühl bekam, sein langjähriger",
+	"\nFreund, der Vater, würde sie ihm als Freundin bevorzugen, tötete er sie kaltblütig."]).
+motiv(besuch,
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'.",
+	"\n\nDie Beweise zeigen eindeutig, dass der Besuch der Mörder war.",
+	"\nBei der Befragung ergibt sich, dass die Putzfrau während einer Liebelei mit ihm auch mit dem Gärtner Zeit verbracht",
+	"\nhatte, was ihn sehr wütend gemacht hatte."]).
+motiv(nachbar,
+	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'.",
+	"\n\nDie Beweise zeigen eindeutig, dass der Nachbar der Mörder war.",
+	"\nBei der Befragung ergibt sich, dass die Putzfrau immer wieder Müll in seinem Garten entsorgt hatte, was ihn so wütend",
+	"\nmachte, dass er sie umbrachte."]).
 
 
 
@@ -1876,9 +1918,6 @@ output(help,
 	["Ich hoffe ich konnte dir helfen."]
 	).
 
-output(solved, 
-	["Du hast den Fall gelöst, herzlichen Glückwunsch!\nBeende das Programm mit 'Quälgeist beenden'."]
-	).
 
 output(wrong_suspicion, ["Dieser Verdacht ist leider falsch, versuche es später nochmal! Du hast noch", Anzahl, "Verdächtigungsversuche übrig."]) :-
 	verdaechtigungszahl(AlteAnzahl),
