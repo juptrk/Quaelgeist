@@ -108,7 +108,10 @@ greeting :-
 	writeln("Denk dran, in diesen Fall sind verschiedene Personen verstrickt, nicht jeder hat die gleichen Infos."),
 	writeln("Es kann also sein, dass eine Person eine Frage nicht beantworten kann, aber eine andere Person die Frage beantworten kann."),
 	writeln("Manchmal ist es auch besser man ist in keinem Gespräch, um sich z.B. in Ruhe umzuschauen."),
+	writeln("Um dich mit einer Person zu unterhaltn musst du mit ihr im gleichen Raum sein und dann ein Gespräch beginnen."),
+	writeln("Möchtest du nicht mehr mit dieser Person sprechen, dann beende das Gespräch und du bist wieder im neutralen Rahmen."),
 	nl, 
 	writeln("Du kannst jederzeit eine Verdächtigung abgeben, insgesamt hast du 3 Versuche um auf die richtige Lösung des Falls zu kommen."),
+	writeln("Du musst den Mörder, den Tatort und die Tatwaffe herausfinden."),
 	writeln("Verdächtigungen werden im neutralen Rahmen getätigt, also wenn du gerade nicht in einem Gespräch mit einer Person bist."),
 	nl.

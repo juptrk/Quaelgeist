@@ -193,8 +193,8 @@ tatwaffe(Tatwaffe) :- alle_waffen(Waffen), random_permutation(Waffen, [Tatwaffe|
 moerder(Moeder) :- alle_taeter(Taeter), random_permutation(Taeter,[Moeder|_Rest]).
 
 %um Mord auszugeben
-mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
-		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
+%mord :- tatort(Ort), tatwaffe(Waffe), moerder(Moerder), 
+%		write('Der Taeter ist: '), writeln(Moerder), write('Der Tatort ist: '), writeln(Ort), write('Die Tatwaffe ist: '), writeln(Waffe).
 
 lageplan :- nl,
 			writeln("                LAGEPLAN             "),
@@ -395,6 +395,11 @@ match([wo, ist, alex], [Ort]) :-
 match([wo, ist, das, kind], [Ort]) :-
 	person('Alex', Ort).
 
+match([wo, ist, kind], [Ort]) :-
+	person('Alex', Ort).
+
+
+
 match(Input, Output) :-
 	ask(Input, Output).
 
@@ -403,6 +408,32 @@ match(_, Answer) :-
 	situation(Situation),
 	random_answer(Situation, Answer).
 
+
+ask(Q, ["Heute ist kein schöner Tag."]):-
+	situation(kind),
+	member(heute, Q).
+
+ask(Q, ["Willst du wissen wo das Kind ist, dann frag 'Wo ist das Kind?'."]) :-
+	member(suchen, Q);
+	member(suche, Q).
+
+
+ask(Q,Waffen):-
+			(member(waffen, Q);
+				member(waffe, Q);
+				member(tatwaffe, Q);
+				member(tatwaffen, Q)),
+			alle_waffen(Waffen),
+			write("Mögliche Tatwaffen sind:"),
+			not(situation(kind)),
+			not(situation(beamter)).
+
+ask(Q, ["Such dir einen Raum aus in den du laufen willst."]):-
+	not(situation(kind)),
+	not(situation(beamter)),
+	(member(herumlaufen, Q);
+		member(umsehen, Q);
+		member(umschauen,Q)).
 
 ask(Q, ["Dort", bist, du, doch, "bereits!"]) :- 
 	situation(X),
@@ -1081,7 +1112,8 @@ ask(Q, []) :-
 	normal(X),
 	(
 		member(tatorte, Q);
-		member(räume, Q)
+		member(räume, Q);
+		member(orte, Q)
 		),
 	nl,
 	writeln("Alle Räume im Haus kommen als Tatort in Frage:"),
